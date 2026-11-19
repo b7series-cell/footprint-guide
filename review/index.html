@@ -87,8 +87,8 @@ a{color:var(--accent)}
     <div class="two">
       <div class="card">
         <h3>Taken trades by time of day</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:09",507,"6"],["13:09-close",281,"11"]]'></div>
-        <p class="cap">Every window made money. The last row comes from the P/L posts (closed +$2,186 at 1:09 PM to +$2,467 at the close); the rest from the 1:09 PM file copy.</p>
+        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",855,"16"],["13:30-close",-67,"1 (Plan 2)"]]'></div>
+        <p class="cap">Every window made money until 13:30, and 12:30-13:30 was the best hour of the day (+8.8R, mostly absorption shorts). After 13:30 the only trade was a Plan 2 value fade long that was stopped.</p>
       </div>
       <div class="card">
         <h3>Taken trades by setup</h3>
@@ -99,9 +99,9 @@ a{color:var(--accent)}
 
     <div class="two">
       <div class="card">
-        <h3>Shadow trades: what the rules skipped, by setup</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Divergence (off)",-456,"142 trades"],["Stacked",-73,"71"],["Absorption",301,"87"]]'></div>
-        <p class="cap">The rules saved $228 overall. Divergence staying off saved $456. Skipped absorption trades (mostly after the 13:30 cut-off) would have made +$301, the first day the cut-off cost money. One day; the rules stay frozen to Dec 2.</p>
+        <h3>Shadow trades: what each rule skipped</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-456,"142 trades · −9.7R"],["Min stop 0.15%",-355,"38 · −11.4R"],["Lunch pause",-21,"48 · +0.9R"],["Stacked stops 11:00",97,"19 · +1.6R"],["Absorption stops 13:30",507,"53 · +5.0R"]]'></div>
+        <p class="cap">The rules saved $228 overall. Divergence off and the 0.15% minimum stop saved $811 between them. The absorption 13:30 cut-off gave up +$507, the first day it cost money (it saved $620 on Nov 18). Shadow trades ignore the 2-position limit, so the real cost is smaller. Rules stay frozen to Dec 2.</p>
       </div>
       <div class="card">
         <h3>Missed trades, by setup</h3>
@@ -117,7 +117,7 @@ a{color:var(--accent)}
         <li>Two trades differ by more than 0.5R: GOOG 10:51 (paper −$64, bot +$51) accounts for $115 of the gap; META 10:59 (paper −$19, bot −$9).</li>
         <li>Webull refused one bracket (AAPL 10:16). Peak margin $117,534 at 9:35.</li>
       </ul>
-      <p class="cap">Full-day numbers are from the 16:10 report. The full-day CSVs were not copied tonight, so the time-of-day split stops at 1:09 PM.</p>
+      <p class="cap">GOOG 10:51: paper filled at 10:52:11 and both halves were stopped at 286.74 by 10:53:42; the bot booked its target instead. Most likely the bot's Nasdaq-only bars never printed the 286.71 stop, so it held on and later caught the drop. Being checked against the bars.</p>
     </div>
   </div>
 </section>
@@ -314,7 +314,7 @@ a{color:var(--accent)}
   </div>
 </section>
 
-<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 4:45 PM ET.</p>
+<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 5:50 PM ET.</p>
 </div>
 
 <script>
