@@ -117,7 +117,7 @@ a{color:var(--accent)}
         <li>Two trades differ by more than 0.5R: GOOG 10:51 (paper −$64, bot +$51) accounts for $115 of the gap; META 10:59 (paper −$19, bot −$9).</li>
         <li>Webull refused one bracket (AAPL 10:16). Peak margin $117,534 at 9:35.</li>
       </ul>
-      <p class="cap">GOOG 10:51: paper filled at 10:52:11 and both halves were stopped at 286.74 by 10:53:42; the bot booked its target instead. Most likely the bot's Nasdaq-only bars never printed the 286.71 stop, so it held on and later caught the drop. Being checked against the bars.</p>
+      <p class="cap">GOOG 10:51: paper filled at 10:52:11 and both halves were stopped at 286.74 by 10:53:42; the bot booked its target instead. Confirmed on the bars: the bot's Nasdaq-only bars topped at 286.705 (10:53), half a cent under its 286.71 stop, so it held on and booked both targets when GOOG fell to 285.37 at 11:01. The bot can miss stops that the full market hits.</p>
     </div>
   </div>
 </section>
@@ -314,7 +314,7 @@ a{color:var(--accent)}
   </div>
 </section>
 
-<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 5:50 PM ET.</p>
+<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 5:45 PM ET.</p>
 </div>
 
 <script>
