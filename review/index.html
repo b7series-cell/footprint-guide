@@ -73,51 +73,51 @@ a{color:var(--accent)}
 
 <!-- ===================== NOV 19 ===================== -->
 <section class="entry" id="nov19">
-  <div class="rail"><div class="d"><b>Nov 19</b>Thu · to 1:09 PM<br><span class="tag new">Latest</span></div></div>
+  <div class="rail"><div class="d"><b>Nov 19</b>Thu · after close<br><span class="tag new">Latest</span></div></div>
   <div class="body">
-    <h2>Best day since Nov 5, and every log is working</h2>
-    <p class="lead">By 1:09 PM the bot had made <span class="num g">+$2,186</span> (+18.2R) on 37 closed trades, 24 of them winners. Webull paper made <span class="num g">+$1,190</span> on 27 fills in its 9:31-11:00 window, close to the bot's +$1,266 on the same window. Patches 44-46 went in overnight. Missed trades are logged for the first time, and there were no late paper fills.</p>
+    <h2>Best day since Nov 5, and it held into the afternoon</h2>
+    <p class="lead">The bot made <span class="num g">+$2,467</span> (+21.2R) on 48 trades, 31 of them winners. Webull paper made <span class="num g">+$1,190</span> on 27 fills in its 9:31-11:00 window, against the bot's +$1,361 on the same trades. No halts, one stop alarm. Since Nov 4 the bot is now <span class="num g">+$4,432</span> (−2.6R) on 1,340 trades.</p>
     <div class="kpis">
-      <div class="kpi"><div class="k">Bot</div><div class="v g">+$2,186</div><div class="n">+18.2R · 37 trades · 65% wins</div></div>
+      <div class="kpi"><div class="k">Bot</div><div class="v g">+$2,467</div><div class="n">+21.2R · 48 trades · 65% wins</div></div>
       <div class="kpi"><div class="k">Webull paper</div><div class="v g">+$1,190</div><div class="n">27 fills, 9:31-11:00</div></div>
-      <div class="kpi"><div class="k">Shadow (rules skipped)</div><div class="v l">−$70</div><div class="n">149 trades · −2.5R</div></div>
-      <div class="kpi"><div class="k">Missed (plan full, cooldown)</div><div class="v l">−$504</div><div class="n">18 trades · −4.1R</div></div>
+      <div class="kpi"><div class="k">Shadow (rules skipped)</div><div class="v l">−$228</div><div class="n">300 trades · −13.7R</div></div>
+      <div class="kpi"><div class="k">Missed (plan full, cooldown)</div><div class="v l">−$467</div><div class="n">19 trades · −3.1R</div></div>
     </div>
 
     <div class="two">
       <div class="card">
         <h3>Taken trades by time of day</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",507,"6"]]'></div>
-        <p class="cap">Every window made money, including 9:31-9:45, which had lost on 4 of the 5 days before.</p>
+        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",855,"16"],["13:30-close",-67,"1 (Plan 2)"]]'></div>
+        <p class="cap">Every window made money until 13:30, and 12:30-13:30 was the best hour of the day (+8.8R, mostly absorption shorts). After 13:30 the only trade was a Plan 2 value fade long that was stopped.</p>
       </div>
       <div class="card">
         <h3>Taken trades by setup</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Stacked",1262,"20 · 70% wins"],["Absorption",520,"13 · 62%"],["Value fade",222,"1"],["80% rule",182,"3"]]'></div>
-        <p class="cap">Shorts made +$1,662 on 31 trades, longs +$524 on 6. 23 trades reached a target (+$2,828), 9 were stopped (−$664).</p>
+        <div class="chart" data-chart="hbar" data-rows='[["Stacked",1262,"20 trades"],["Absorption",797,"22"],["80% rule",182,"3"],["Value fade",155,"2"],["OR breakout",71,"1"]]'></div>
+        <p class="cap">Stacked made all its money before its 11:00 cut-off. Absorption added +$277 on 9 trades after 1:09 PM. Plan 1 +$2,059, Plan 2 +$408.</p>
       </div>
     </div>
 
     <div class="two">
       <div class="card">
         <h3>Shadow trades: what each rule skipped</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-140,"82 trades · 49% wins"],["Min stop 0.15%",-82,"14 · 43%"],["Lunch pause",-21,"48 · 50%"],["Stacked stops 11:00",173,"5 · 80%"]]'></div>
-        <p class="cap">A quiet day for the rules. Together they skipped trades that would have lost only $70. The stacked 11:00 cut-off gave up +$173. No absorption signals came after 13:30 yet.</p>
+        <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-456,"142 trades · −9.7R"],["Min stop 0.15%",-355,"38 · −11.4R"],["Lunch pause",-21,"48 · +0.9R"],["Stacked stops 11:00",97,"19 · +1.6R"],["Absorption stops 13:30",507,"53 · +5.0R"]]'></div>
+        <p class="cap">The rules saved $228 overall. Divergence off and the 0.15% minimum stop saved $811 between them. The absorption 13:30 cut-off gave up +$507, the first day it cost money (it saved $620 on Nov 18). Shadow trades ignore the 2-position limit, so the real cost is smaller. Rules stay frozen to Dec 2.</p>
       </div>
       <div class="card">
-        <h3>Missed trades (new log)</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Plan full (max 2 open)",-360,"13 trades · 38% wins"],["Cooldown after a stop",-144,"5 · 40%"]]'></div>
-        <p class="cap">The first day of missed.csv. Alerts the plan could not take would have lost $504, most of it 9:45-10:00 (−$404). The limits helped today.</p>
+        <h3>Missed trades, by setup</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Stacked",-352,"11 trades"],["Absorption",-115,"8"]]'></div>
+        <p class="cap">Alerts the plan could not take (2 open already, or cooldown after a stop) would have lost $467. The position limit helped again.</p>
       </div>
     </div>
 
     <div class="card">
       <h3>Paper vs the bot</h3>
       <ul class="pts">
-        <li>Paper <span class="num g">+$1,190</span> vs bot <span class="num g">+$1,266</span> on the 9:31-11:00 alerts, a gap of about $76. Entry slippage cost about $105.</li>
-        <li>patch45 is working: 3 unfilled entries were cancelled the moment the bot expired them, and there were no late fills.</li>
-        <li>Delta exits were roughly flat today (+$22 on 5 trades).</li>
+        <li>Paper <span class="num g">+$1,190</span> vs bot <span class="num g">+$1,361</span> on the same 27 trades, a gap of $171.</li>
+        <li>Two trades differ by more than 0.5R: GOOG 10:51 (paper −$64, bot +$51) accounts for $115 of the gap; META 10:59 (paper −$19, bot −$9).</li>
+        <li>Webull refused one bracket (AAPL 10:16). Peak margin $117,534 at 9:35.</li>
       </ul>
-      <p class="cap">Day still in progress: 6 of 43 alerts were open or waiting at 1:09 PM. Numbers will change by the close.</p>
+      <p class="cap">GOOG 10:51: paper filled at 10:52:11 and both halves were stopped at 286.74 by 10:53:42; the bot booked its target instead. Confirmed on the bars: the bot's Nasdaq-only bars topped at 286.705 (10:53), half a cent under its 286.71 stop, so it held on and booked both targets when GOOG fell to 285.37 at 11:01. The bot can miss stops that the full market hits.</p>
     </div>
   </div>
 </section>
@@ -314,7 +314,7 @@ a{color:var(--accent)}
   </div>
 </section>
 
-<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 1:15 PM ET.</p>
+<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 5:45 PM ET.</p>
 </div>
 
 <script>
