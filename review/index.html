@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Order Flow - Footprint bot Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: newest-first timeline; each review is a dated block with a left date rail, charts inside */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --fg:#17202b; --muted:#5d6a7a; --line:#dde2e8;
+  --gain:#1a8a5a; --loss:#c93c3c; --accent:#2d5fd3; --soft:#eef2f8;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1419;--panel:#171e26;--fg:#e4e9ef;--muted:#93a1b2;--line:#2a3440;--gain:#3cbf85;--loss:#ef6b6b;--accent:#7a9ff0;--soft:#1d2631;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1419;--panel:#171e26;--fg:#e4e9ef;--muted:#93a1b2;--line:#2a3440;--gain:#3cbf85;--loss:#ef6b6b;--accent:#7a9ff0;--soft:#1d2631;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:30px;letter-spacing:-.01em}
+h2{font-size:22px}
+h3{font-size:16px;margin-top:4px}
+p{margin:0;max-width:68ch}
+.sub{color:var(--muted);margin-top:6px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.g{color:var(--gain)} .l{color:var(--loss)}
+.entry{display:grid;grid-template-columns:120px 1fr;gap:24px;margin-top:36px}
+.rail{position:relative}
+.rail .d{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);font-family:var(--mono);font-size:13px;color:var(--muted)}
+.rail .d b{display:block;font-family:var(--display);font-size:20px;color:var(--fg)}
+.tag{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
+.tag.new{background:var(--accent);color:var(--panel)}
+.body{display:flex;flex-direction:column;gap:18px;min-width:0;border-left:2px solid var(--line);padding-left:24px}
+.lead{font-size:16.5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.kpi .k{font-size:12px;color:var(--muted);letter-spacing:.03em}
+.kpi .v{font-family:var(--mono);font-size:22px;font-weight:500;margin-top:2px}
+.kpi .n{font-size:12px;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;min-width:0}
+.card .cap{font-size:12.5px;color:var(--muted);margin-top:10px}
+.two{display:grid;grid-template-columns:1fr;gap:14px}
+.two>*{min-width:0}
+ul.pts{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+ul.pts li{max-width:70ch}
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto}
+.chart text{font-family:var(--body);font-size:12px;fill:var(--fg)}
+.chart text.m{fill:var(--muted)}
+.chart text.v{font-family:var(--mono);font-size:11.5px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td.r,th.r{text-align:right}
+.tbl{overflow-x:auto}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.opt b{font-family:var(--display)}
+.foot{margin-top:48px;color:var(--muted);font-size:13px}
+a{color:var(--accent)}
+@media (max-width:700px){.entry{grid-template-columns:1fr;gap:10px}.body{border-left:0;padding-left:0}.rail .d{position:static}.rail .d b{display:inline;margin-right:8px}.two{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Order Flow - Footprint bot Review</h1>
+  <p class="sub">Why the footprint bot loses, what the shadow trades show, and what changed. Newest first. Dollars are the bot's own tracking unless marked as paper.</p>
+</header>
+
+<!-- ===================== NOV 19 ===================== -->
+<section class="entry" id="nov19">
+  <div class="rail"><div class="d"><b>Nov 19</b>Thu · to 1:09 PM<br><span class="tag new">Latest</span></div></div>
+  <div class="body">
+    <h2>Best day since Nov 5, and every log is working</h2>
+    <p class="lead">By 1:09 PM the bot had made <span class="num g">+$2,186</span> (+18.2R) on 37 closed trades, 24 of them winners. Webull paper made <span class="num g">+$1,190</span> on 27 fills in its 9:31-11:00 window, close to the bot's +$1,266 on the same window. Patches 44-46 went in overnight. Missed trades are logged for the first time, and there were no late paper fills.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Bot</div><div class="v g">+$2,186</div><div class="n">+18.2R · 37 trades · 65% wins</div></div>
+      <div class="kpi"><div class="k">Webull paper</div><div class="v g">+$1,190</div><div class="n">27 fills, 9:31-11:00</div></div>
+      <div class="kpi"><div class="k">Shadow (rules skipped)</div><div class="v l">−$70</div><div class="n">149 trades · −2.5R</div></div>
+      <div class="kpi"><div class="k">Missed (plan full, cooldown)</div><div class="v l">−$504</div><div class="n">18 trades · −4.1R</div></div>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Taken trades by time of day</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",507,"6"]]'></div>
+        <p class="cap">Every window made money, including 9:31-9:45, which had lost on 4 of the 5 days before.</p>
+      </div>
+      <div class="card">
+        <h3>Taken trades by setup</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Stacked",1262,"20 · 70% wins"],["Absorption",520,"13 · 62%"],["Value fade",222,"1"],["80% rule",182,"3"]]'></div>
+        <p class="cap">Shorts made +$1,662 on 31 trades, longs +$524 on 6. 23 trades reached a target (+$2,828), 9 were stopped (−$664).</p>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Shadow trades: what each rule skipped</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-140,"82 trades · 49% wins"],["Min stop 0.15%",-82,"14 · 43%"],["Lunch pause",-21,"48 · 50%"],["Stacked stops 11:00",173,"5 · 80%"]]'></div>
+        <p class="cap">A quiet day for the rules. Together they skipped trades that would have lost only $70. The stacked 11:00 cut-off gave up +$173. No absorption signals came after 13:30 yet.</p>
+      </div>
+      <div class="card">
+        <h3>Missed trades (new log)</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Plan full (max 2 open)",-360,"13 trades · 38% wins"],["Cooldown after a stop",-144,"5 · 40%"]]'></div>
+        <p class="cap">The first day of missed.csv. Alerts the plan could not take would have lost $504, most of it 9:45-10:00 (−$404). The limits helped today.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Paper vs the bot</h3>
+      <ul class="pts">
+        <li>Paper <span class="num g">+$1,190</span> vs bot <span class="num g">+$1,266</span> on the 9:31-11:00 alerts, a gap of about $76. Entry slippage cost about $105.</li>
+        <li>patch45 is working: 3 unfilled entries were cancelled the moment the bot expired them, and there were no late fills.</li>
+        <li>Delta exits were roughly flat today (+$22 on 5 trades).</li>
+      </ul>
+      <p class="cap">Day still in progress: 6 of 43 alerts were open or waiting at 1:09 PM. Numbers will change by the close.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NOV 18 ===================== -->
+<section class="entry" id="nov18">
+  <div class="rail"><div class="d"><b>Nov 18</b>Wed · after close<br><span class="tag">Review</span></div></div>
+  <div class="body">
+    <h2>A small win, and the new rules are working</h2>
+    <p class="lead">The bot made <span class="num g">+$285</span> on 45 trades and Webull paper made <span class="num g">+$103</span>. The 301 trades the new rules skipped would have lost <span class="num l">$2,144</span>. What held the day back was a bad first 20 minutes, delta exits, and paper filling worse than the bot.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Bot</div><div class="v g">+$285</div><div class="n">+0.7R · 45 trades</div></div>
+      <div class="kpi"><div class="k">Webull paper</div><div class="v g">+$103</div><div class="n">after fees</div></div>
+      <div class="kpi"><div class="k">Skipped by rules</div><div class="v l">−$2,144</div><div class="n">301 shadow trades · −48.4R</div></div>
+      <div class="kpi"><div class="k">Paper gap</div><div class="v l">−$237</div><div class="n">same 31 fills</div></div>
+    </div>
+
+    <div class="card">
+      <h3>What each rule saved (shadow trades)</h3>
+      <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-780,"135 trades · 47% wins"],["Min stop 0.15%",-497,"98 trades · 41%"],["Absorption stops 13:30",-620,"26 trades · 31%"],["Lunch pause 11:00-12:30",-289,"29 trades · 38%"],["Stacked stops 11:00",42,"13 trades · 54%"]]'></div>
+      <p class="cap">What the skipped trades would have made. Red bars are losses the rules avoided. Shadow trades don't use position slots, so only some would really have been taken. −$1,658 of the −$2,144 came after 13:00.</p>
+    </div>
+
+    <div class="card" id="shadow-days">
+      <h3>What the new rules skipped, per day</h3>
+      <div class="chart" data-chart="vbar" data-rows='[["Oct 28",-453],["Oct 29",222],["Oct 30",249],["Nov 2",-119],["Nov 3",-172],["Nov 4",-129],["Nov 5",-684],["Nov 6",-980],["Nov 9",-559],["Nov 10",-85],["Nov 11",127],["Nov 12",-682],["Nov 13",-670],["Nov 16",-20],["Nov 18*",-2144]]'></div>
+      <p class="cap">What the trades the new rules skip would have made each day. Red = losses avoided, green = profit given up. Oct 28 to Nov 16 come from the backtest (old rules minus divergence off + 0.15% min stop + lunch pause, slots included). *Nov 18 is the bot's live shadow log, the first full day it was recorded; it also includes the stacked 11:00 and absorption 13:30 cut-offs and ignores slots, so it runs larger. The rules helped on 12 of 15 days: about <span class="num g">$3,960</span> over the 14 backtest days, plus <span class="num g">$2,144</span> on Nov 18.</p>
+    </div>
+
+    <div class="card">
+      <h3>Nov 18 shadow trades by hour</h3>
+      <div class="chart" data-chart="hbar" data-rows='[["9:31-10:00",-216,"divergence −$144, min stop −$72"],["10:00-11:00",-258,"divergence −$272"],["11:00-12:00",-71,"lunch pause −$144, min stop +$74"],["12:00-13:00",59,"divergence +$202, stacked +$117, pause −$145"],["13:00-14:00",-275,"min stop −$147, divergence −$129"],["14:00-15:00",-786,"divergence −$459, min stop −$245"],["15:00-15:45",-597,"absorption after 13:30 −$489"]]'></div>
+      <p class="cap">301 skipped trades, −$2,144 in all. The afternoon (13:00 onward) holds −$1,658 of it. Only 12:00-13:00 would have made money.</p>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Real trades by time of day</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["9:34-9:54",-173,"7 trades"],["10:00-11:00",529,"23 trades"],["11:00-12:30",-38,"1 (Plan 2)"],["12:30-13:30",-33,"14 trades"]]'></div>
+        <p class="cap">Opening losers were TSLA, AMZN, PLTR and MSFT on wide stops, about $125 each.</p>
+      </div>
+      <div class="card">
+        <h3>The 9:31-9:45 window, last 5 days</h3>
+        <div class="chart" data-chart="vbar" data-rows='[["Nov 12",-161],["Nov 13",-250],["Nov 16",-413],["Nov 17",263],["Nov 18",-95]]'></div>
+        <p class="cap">Lost on 4 of the last 5 days. It made money every day Nov 5-11.</p>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>By setup</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Stacked",172,"16 · 50% wins"],["80% rule",160,"3"],["Absorption",6,"24 · 46%"],["Value fade",-53,"2"]]'></div>
+      </div>
+      <div class="card">
+        <h3>Why paper made less than the bot</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["TSLA late fill 10:16",-135,"filled after expiry"],["Entry slippage",-80,"up to 50c"],["Delta-exit closes",-40,"NVDA, AVGO"]]'></div>
+        <p class="cap">Paper +$119 vs bot +$356 on the same fills. 13 late fills since Nov 12, net +$181.</p>
+      </div>
+    </div>
+
+    <div class="card" id="missed-full">
+      <h3>Missed because the plan was full (max 2 open), per day</h3>
+      <div class="chart" data-chart="vbar" data-rows='[["Oct 28",-11],["Oct 29",-144],["Oct 30",-180],["Nov 2",271],["Nov 3",-353],["Nov 4",480],["Nov 5",1251],["Nov 6",-785],["Nov 9",18],["Nov 10",-331],["Nov 11",159],["Nov 12",169],["Nov 13",356],["Nov 16",-383],["Nov 17",-105],["Nov 18",160]]'></div>
+      <p class="cap">Backtest with today's rules, Oct 28 to Nov 18 (16 sessions). Each bar is what the alerts skipped for a full plan would have made, scored as if taken. Green = money the limit cost, red = losses it avoided. In total, 178 skipped alerts would have made <span class="num g">+$572</span> but <span class="num l">−6.7R</span>. With no limit at all the bot makes +$329 more but 7.0R less (+$5,528 vs +$5,199). Skipped stacked trades: <span class="num g">+$2,129</span> (94). Skipped absorption: <span class="num l">−$1,411</span> (75). From Nov 19, missed.csv logs these live.</p>
+    </div>
+
+    <div class="card" id="late-fills">
+      <h3>Late paper fills by day: what patch45 would have cancelled</h3>
+      <div class="chart" data-chart="vbar" data-rows='[["Nov 12 (1)",-16],["Nov 13 (10)",209],["Nov 16 (1)",123],["Nov 17 (0)",0],["Nov 18 (1)",-135]]'></div>
+      <p class="cap">Paper trades whose entry filled after the bot had already expired the alert. With patch45 these orders are cancelled, so paper would have missed them. 13 trades, net <span class="num g">+$181</span>: Nov 13 carries it because paper then traded all day (the 9:31-11:00 paper window started Nov 16) and divergence was still on. Since Nov 16 it is 2 trades, net −$12.</p>
+      <div class="tbl" style="margin-top:10px"><table>
+        <tr><th>Day</th><th>Trade</th><th>Alert (ET)</th><th class="r">Paper $</th></tr>
+        <tr><td>Nov 12</td><td>MU single print, long</td><td class="num">9:36</td><td class="r"><span class="num l">−$16</span></td></tr>
+        <tr><td>Nov 13</td><td>AVGO divergence, short</td><td class="num">10:05</td><td class="r"><span class="num g">+$88</span></td></tr>
+        <tr><td>Nov 13</td><td>AMZN divergence, short</td><td class="num">11:26</td><td class="r"><span class="num g">+$31</span></td></tr>
+        <tr><td>Nov 13</td><td>META divergence, long</td><td class="num">12:30</td><td class="r"><span class="num g">+$34</span></td></tr>
+        <tr><td>Nov 13</td><td>MU divergence, short</td><td class="num">12:35</td><td class="r"><span class="num g">+$76</span></td></tr>
+        <tr><td>Nov 13</td><td>MSFT absorption, long</td><td class="num">13:21</td><td class="r"><span class="num l">−$30</span></td></tr>
+        <tr><td>Nov 13</td><td>GOOG divergence, short</td><td class="num">14:18</td><td class="r"><span class="num l">−$17</span></td></tr>
+        <tr><td>Nov 13</td><td>MU divergence, long</td><td class="num">14:24</td><td class="r"><span class="num l">−$42</span></td></tr>
+        <tr><td>Nov 13</td><td>SNDK absorption, short</td><td class="num">14:39</td><td class="r"><span class="num g">+$69</span></td></tr>
+        <tr><td>Nov 13</td><td>PLTR absorption, long</td><td class="num">14:49</td><td class="r"><span class="num g">+$24</span></td></tr>
+        <tr><td>Nov 13</td><td>GOOG absorption, short</td><td class="num">15:36</td><td class="r"><span class="num l">−$25</span></td></tr>
+        <tr><td>Nov 16</td><td>PLTR absorption, short</td><td class="num">10:00</td><td class="r"><span class="num g">+$123</span></td></tr>
+        <tr><td>Nov 18</td><td>TSLA absorption, long</td><td class="num">10:16</td><td class="r"><span class="num l">−$135</span></td></tr>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <h3>Since the new rules (Nov 17-18)</h3>
+      <ul class="pts">
+        <li>Bot <span class="num g">+$163</span> over two days (Nov 17 <span class="num l">−$122</span>, Nov 18 <span class="num g">+$285</span>); paper about <span class="num g">+$380</span>. Plan 1 alone <span class="num g">+$334</span>.</li>
+        <li>Plan 2 has lost <span class="num l">$584</span> since Nov 12, with only Nov 18 positive.</li>
+        <li>Delta exits cost <span class="num l">$229</span> on 9 trades today and <span class="num l">$353</span> on 24 trades over Nov 17-18.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Options to consider</h3>
+      <p class="sub" style="margin-top:2px">Nothing changed. Rules are frozen until the review around Dec 2.</p>
+      <div class="opt" style="margin-top:10px">
+        <b>1</b><span>Test delta exits against holding to stop or target (analysis only).</span>
+        <b>2</b><span>Watch 9:31-9:45. If it keeps losing, a 9:45 start for Plan 1 is the obvious candidate.</span>
+        <b>3</b><span>Cancel paper stop entries at the expiry time itself, so paper and the bot hold the same trades.</span>
+        <b>4</b><span>Review Plan 2's value fade and single print with more days.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NOV 16 EVENING ===================== -->
+<section class="entry" id="nov16-decision">
+  <div class="rail"><div class="d"><b>Nov 16</b>Mon · evening<br><span class="tag">Decision</span></div></div>
+  <div class="body">
+    <h2>Three rule changes, live from Nov 17</h2>
+    <p>You chose all three options after the backtest. They were installed that evening (v1.48).</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">A</div><div class="v" style="font-size:17px">Divergence off</div><div class="n">no edge in the flip test</div></div>
+      <div class="kpi"><div class="k">B</div><div class="v" style="font-size:17px">Min stop 0.15%</div><div class="n">tight stops lost every day</div></div>
+      <div class="kpi"><div class="k">C</div><div class="v" style="font-size:17px">Lunch pause</div><div class="n">no new Plan 1 trades 11:00-12:30 ET</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NOV 16 BACKTEST ===================== -->
+<section class="entry" id="backtest">
+  <div class="rail"><div class="d"><b>Nov 16</b>Mon · afternoon<br><span class="tag">Backtest</span></div></div>
+  <div class="body">
+    <h2>Backtest: Oct 28 to Nov 16, 14 sessions</h2>
+    <p class="lead">The changes help, but none of them make Nov 12-16 profitable. All three together made <span class="num g">+42.1R / +$5,231</span>, against <span class="num l">−45.7R</span> / +$1,274 with the old rules.</p>
+
+    <div class="card">
+      <h3>Total R by rule set</h3>
+      <div class="chart" data-chart="hbar" data-unit="R" data-rows='[["Old rules",-45.7,"1,709 trades · +$1,274"],["A. Divergence off",-6.4,"1,413 · +$3,031"],["B. Min stop 0.15%",5.2,"1,092 · +$1,901"],["A + B",26.9,"917 · +$3,952"],["A + B + lunch",42.1,"702 · +$5,231"]]'></div>
+    </div>
+
+    <div class="card">
+      <h3>Day by day, old rules vs A + B + lunch</h3>
+      <div class="chart" data-chart="pair" data-rows='[["Oct 28",345,798],["Oct 29",-76,-298],["Oct 30",895,646],["Nov 2",345,464],["Nov 3",-351,-179],["Nov 4",-12,117],["Nov 5",2440,3124],["Nov 6",-1160,-180],["Nov 9",735,1294],["Nov 10",-43,42],["Nov 11",1082,955],["Nov 12",-1320,-638],["Nov 13",-794,-124],["Nov 16",-812,-792]]'></div>
+      <p class="cap">Grey = old rules, blue = A + B + lunch. Nov 16 stops at 11:58 ET. Every version lost Nov 12-16 (win rates 39-46%).</p>
+    </div>
+
+    <div class="card">
+      <h3>What changed from Nov 12 (A + B rules)</h3>
+      <div class="tbl"><table>
+        <tr><th></th><th class="r">Oct 28 to Nov 11</th><th class="r">Nov 12 to 16</th></tr>
+        <tr><td>Absorption</td><td class="r num"><span class="g">+$3,612</span> · 53% wins</td><td class="r num"><span class="l">−$829</span> · 38%</td></tr>
+        <tr><td>Stacked</td><td class="r num"><span class="g">+$2,649</span> · 55%</td><td class="r num"><span class="l">−$974</span> · 48%</td></tr>
+        <tr><td>Shorts</td><td class="r num"><span class="g">+$5,279</span> · 55%</td><td class="r num"><span class="l">−$741</span> · 42%</td></tr>
+        <tr><td>Longs</td><td class="r num"><span class="g">+$891</span> · 48%</td><td class="r num"><span class="l">−$1,478</span> · 41%</td></tr>
+        <tr><td>9:31-10:00</td><td class="r num g">+$2,631</td><td class="r num l">−$998</td></tr>
+      </table></div>
+      <p class="cap">Shorts and the first half hour carried the profit, and both turned in the same three sessions. That points to a change in the market, not a broken rule.</p>
+    </div>
+    <ul class="pts">
+      <li>Bot's own code and server settings, run on recorded footprint bars with live-like levels. Matches the live bot well for Nov 4-11 (828 vs 855 trades).</li>
+      <li>Profits count targets on touch. Paper has run $85-240 a day worse; on that basis only A + B + lunch stays clearly positive.</li>
+      <li>B and C were picked from the same days they're scored on, so expect less going forward.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== NOV 16 DEEP DIVE ===================== -->
+<section class="entry" id="nov16">
+  <div class="rail"><div class="d"><b>Nov 16</b>Mon · 11:35 ET<br><span class="tag">Deep dive</span></div></div>
+  <div class="body">
+    <h2>Why the bot keeps losing</h2>
+    <p class="lead">The "+$1,718 since Nov 4" was one great day (Nov 5, <span class="num g">+$2,202</span>). Without it the main setups lost about <span class="num l">$1,200</span> over eight days. Three things dragged it down: divergence trades, very tight stops, and paper filling worse than the bot's tracking.</p>
+
+    <div class="card">
+      <h3>Daily result, Plan 1 main setups</h3>
+      <div class="chart" data-chart="vbar" data-rows='[["Nov 4",345],["Nov 5",2202],["Nov 6",-485],["Nov 9",-197],["Nov 10",407],["Nov 11",670],["Nov 12",-463],["Nov 13",-844],["Nov 16",-626]]'></div>
+      <p class="cap">Nov 16 to 11:35. Nov 12 was cut short by the old 1.5% daily stop.</p>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Right side vs flipped side</h3>
+        <div class="chart" data-chart="flip" data-rows='[["Stacked",56.9,43.1],["Absorption",55.1,44.9],["Divergence",47.1,52.5]]'></div>
+        <p class="cap">835 trades replayed at 1:1 on 1-minute bars, Nov 4-11. Divergence wins less than a coin flip; the other two have a small edge.</p>
+      </div>
+      <div class="card">
+        <h3>Stop distance, Nov 4-13</h3>
+        <div class="chart" data-chart="hbar" data-rows='[["Under 0.09%",-864,"40% wins · −46.3R"],["0.09-0.15%",-642,"46% · −21.1R"],["0.15-0.23%",95,"49% · +1.0R"],["0.23-0.34%",280,"51% · +5.6R"],["Over 0.34%",2766,"55% · +23.7R"]]'></div>
+        <p class="cap">198 trades in each group. Stops under 0.15% lost on all 8 days.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Nov 16 morning by time</h3>
+      <div class="chart" data-chart="hbar" data-rows='[["09:31-09:40",-521,"7 trades · four stacked shorts stopped"],["09:40-10:00",-96,"9"],["10:00-10:30",-151,"7"],["10:30-11:00",-19,"15"],["11:00-11:35",-44,"14"]]'></div>
+      <p class="cap">Two thirds of the loss came in the first nine minutes. Paper was −$1,178 against the bot's −$936 on the same 43 alerts.</p>
+    </div>
+  </div>
+</section>
+
+<p class="foot">Source: the review doc <a href="https://claude.ai/artifact/GGRp9RkCYsNRTideksxFw6">Why the bot keeps losing</a>, the server's outcomes and shadow.csv, and the variant backtest. Updated Nov 19, 1:15 PM ET.</p>
+</div>
+
+<script>
+(function(){
+const NS="http://www.w3.org/2000/svg";
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+function fmt(v,u){if(u==="R")return (v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+"R";return (v>0?"+":v<0?"−":"")+"$"+Math.abs(Math.round(v)).toLocaleString("en-US")}
+function svg(w,h){return el("svg",{viewBox:`0 0 ${w} ${h}`,role:"img"})}
+function hbar(box,rows,u){
+  const W=600,lw=150,rh=30,top=6,H=top+rows.length*rh+4,vw=70;
+  const s=svg(W,H);const max=Math.max(...rows.map(r=>Math.abs(r[1])));const hasNeg=rows.some(r=>r[1]<0),hasPos=rows.some(r=>r[1]>0);
+  const plotL=lw+(hasNeg?vw:0), plotR=W-(hasPos?vw:6);
+  const span=plotR-plotL; let zero=hasNeg&&hasPos?plotL+span*(Math.max(...rows.map(r=>-r[1]),0)/(Math.max(...rows.map(r=>-r[1]),0)+Math.max(...rows.map(r=>r[1]),0))):(hasNeg?plotR:plotL);
+  const sc=hasNeg&&hasPos?span/(Math.max(...rows.map(r=>-r[1]),0)+Math.max(...rows.map(r=>r[1]),0)):span/max;
+  s.appendChild(el("line",{x1:zero,x2:zero,y1:0,y2:H,stroke:"var(--line)","stroke-width":1}));
+  rows.forEach((r,i)=>{const y=top+i*rh;const v=r[1];const w=Math.max(1.5,Math.abs(v)*sc);const x=v<0?zero-w:zero;
+    s.appendChild(el("text",{x:0,y:y+12},r[0]));
+    if(r[2])s.appendChild(el("text",{x:0,y:y+25,class:"m","font-size":"10.5"},r[2]));
+    s.appendChild(el("rect",{x,y:y+4,width:w,height:16,rx:2,fill:v<0?"var(--loss)":"var(--gain)"}));
+    const t=el("text",{x:v<0?x-6:x+w+6,y:y+16,class:"v","text-anchor":v<0?"end":"start"},fmt(v,u));t.style.fill=v<0?"var(--loss)":"var(--gain)";s.appendChild(t);
+  });box.appendChild(s)}
+function vbar(box,rows){
+  const W=600,H=220,pt=22,pb=26,n=rows.length,bw=(W-20)/n;const mx=Math.max(...rows.map(r=>Math.max(r[1],0))),mn=Math.min(...rows.map(r=>Math.min(r[1],0)));
+  const sc=(H-pt-pb)/(mx-mn||1);const zero=pt+mx*sc;const s=svg(W,H);
+  s.appendChild(el("line",{x1:10,x2:W-10,y1:zero,y2:zero,stroke:"var(--line)"}));
+  rows.forEach((r,i)=>{const v=r[1],h=Math.max(1.5,Math.abs(v)*sc),x=10+i*bw+bw*.18,w=bw*.64,y=v<0?zero:zero-h;
+    s.appendChild(el("rect",{x,y,width:w,height:h,rx:2,fill:v<0?"var(--loss)":"var(--gain)"}));
+    const t=el("text",{x:x+w/2,y:v<0?y+h+13:y-5,class:"v","text-anchor":"middle"},fmt(v));t.style.fill=v<0?"var(--loss)":"var(--gain)";
+    if(v<0&&y+h+13>H-pb+4){t.setAttribute("y",zero-5)}
+    if(n>10){t.style.fontSize="9.5px"}
+    s.appendChild(t);
+    {const lb=el("text",{x:x+w/2,y:H-6,class:"m","text-anchor":"middle"},r[0]);if(n>10)lb.style.fontSize="9.5px";s.appendChild(lb);}});box.appendChild(s)}
+function pair(box,rows){
+  const W=640,H=250,pt=16,pb=28,n=rows.length,bw=(W-50)/n;const vals=rows.flatMap(r=>[r[1],r[2]]);const mx=Math.max(...vals,0),mn=Math.min(...vals,0);
+  const sc=(H-pt-pb)/(mx-mn);const zero=pt+mx*sc;const s=svg(W,H);
+  [-1000,0,1000,2000,3000].forEach(g=>{if(g<mn||g>mx)return;const y=zero-g*sc;s.appendChild(el("line",{x1:46,x2:W,y1:y,y2:y,stroke:"var(--line)","stroke-dasharray":g?"2 3":""}));s.appendChild(el("text",{x:42,y:y+4,class:"m v","text-anchor":"end"},fmt(g)))});
+  rows.forEach((r,i)=>{const x0=50+i*bw;[[r[1],"var(--muted)",.12],[r[2],"var(--accent)",.5]].forEach(([v,c,o])=>{const h=Math.max(1.5,Math.abs(v)*sc);const b=el("rect",{x:x0+bw*o,y:v<0?zero:zero-h,width:bw*.36,height:h,rx:1.5,fill:c});const tt=el("title",{},`${r[0]}: ${fmt(v)}`);b.appendChild(tt);s.appendChild(b)});
+    const lab=el("text",{x:x0+bw/2,y:H-8,class:"m","text-anchor":"middle","font-size":"10.5"},r[0]);s.appendChild(lab);
+    if(r[0]==="Nov 12"){s.appendChild(el("line",{x1:x0-1,x2:x0-1,y1:pt-8,y2:H-pb+4,stroke:"var(--loss)","stroke-dasharray":"3 3"}));s.appendChild(el("text",{x:x0-5,y:pt-2,class:"m","font-size":"10.5","text-anchor":"end"},"from Nov 12, every version lost →"))}
+  });box.appendChild(s)}
+function flip(box,rows){
+  const W=560,lw=96,rh=34,H=rows.length*rh+22,s=svg(W,H),pl=lw,pw=W-lw-4,mid=pl+pw/2;
+  rows.forEach((r,i)=>{const y=i*rh+4;const a=r[1]/(r[1]+r[2]);
+    s.appendChild(el("text",{x:0,y:y+17},r[0]));
+    s.appendChild(el("rect",{x:pl,y:y+4,width:pw*a,height:18,fill:r[1]>r[2]?"var(--gain)":"var(--loss)",rx:2}));
+    s.appendChild(el("rect",{x:pl+pw*a,y:y+4,width:pw*(1-a),height:18,fill:"var(--soft)",rx:2}));
+    const t1=el("text",{x:pl+6,y:y+17,class:"v"},r[1]+"%");t1.style.fill="var(--panel)";s.appendChild(t1);
+    s.appendChild(el("text",{x:pl+pw-6,y:y+17,class:"v m","text-anchor":"end"},r[2]+"%"));});
+  s.appendChild(el("line",{x1:mid,x2:mid,y1:0,y2:H-18,stroke:"var(--fg)","stroke-dasharray":"2 3"}));
+  s.appendChild(el("text",{x:mid,y:H-4,class:"m","text-anchor":"middle","font-size":"10.5"},"50% coin flip · bot's side (left) vs flipped (right)"));
+  box.appendChild(s)}
+const F={hbar,vbar,pair,flip};
+document.querySelectorAll("[data-chart]").forEach(b=>{try{F[b.dataset.chart](b,JSON.parse(b.dataset.rows),b.dataset.unit)}catch(e){console.error(e)}});
+})();
+</script>
+
+</body>
+</html>
