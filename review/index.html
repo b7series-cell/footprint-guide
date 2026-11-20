@@ -704,7 +704,7 @@ function hm(m){return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).
 function load(D){
   if(D.p) return D.p;
   D.box.querySelector(".tx-body").textContent="Loading trades…";
-  D.p=fetch("data/"+D.day+".json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(j=>{
+  D.p=fetch("data/"+D.day+".json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(j=>{
     D.data=j;const k=dkey(D.day);
     j.trades.forEach(t=>t.link=k+"-"+t.id);
     j.paper.forEach(p=>{p.kind="paper";p.link=p.bot?k+"-"+p.bot:null;p.id=p.bot||(p.time.replace(":","")+"-"+p.sym)});
