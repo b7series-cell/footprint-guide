@@ -85,12 +85,12 @@ a{color:var(--accent)}
     <div class="two">
       <div class="card">
         <h3>Taken trades by time of day</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",855,"16"],["13:30-close",-67,"1 (Plan 2)"]]'></div>
+        <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["9:31-9:45",275,"7 trades"],["9:45-10:00",149,"3"],["10:00-11:00",842,"18"],["11:00-12:30",413,"3 (Plan 2 only)"],["12:30-13:30",855,"16"],["13:30-close",-67,"1 (Plan 2)"]]'></div>
         <p class="cap">Every window made money until 13:30, and 12:30-13:30 was the best hour of the day (+8.8R, mostly absorption shorts). After 13:30 the only trade was a Plan 2 value fade long that was stopped.</p>
       </div>
       <div class="card">
         <h3>Taken trades by setup</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Stacked",1262,"20 trades"],["Absorption",797,"22"],["80% rule",182,"3"],["Value fade",155,"2"],["OR breakout",71,"1"]]'></div>
+        <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["Stacked",1262,"20 trades"],["Absorption",797,"22"],["80% rule",182,"3"],["Value fade",155,"2"],["OR breakout",71,"1"]]'></div>
         <p class="cap">Stacked made all its money before its 11:00 cut-off. Absorption added +$277 on 9 trades after 1:09 PM. Plan 1 +$2,059, Plan 2 +$408.</p>
       </div>
     </div>
@@ -98,12 +98,12 @@ a{color:var(--accent)}
     <div class="two">
       <div class="card">
         <h3>Shadow trades: what each rule skipped</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-456,"142 trades · −9.7R"],["Min stop 0.15%",-355,"38 · −11.4R"],["Lunch pause",-21,"48 · +0.9R"],["Stacked stops 11:00",97,"19 · +1.6R"],["Absorption stops 13:30",507,"53 · +5.0R"]]'></div>
+        <div class="chart" data-drill="shadow" data-chart="hbar" data-rows='[["Divergence off",-456,"142 trades · −9.7R"],["Min stop 0.15%",-355,"38 · −11.4R"],["Lunch pause",-21,"48 · +0.9R"],["Stacked stops 11:00",97,"19 · +1.6R"],["Absorption stops 13:30",507,"53 · +5.0R"]]'></div>
         <p class="cap">The rules saved $228 overall. Divergence off and the 0.15% minimum stop saved $811 between them. The absorption 13:30 cut-off gave up +$507, the first day it cost money (it saved $620 on Nov 18). Shadow trades ignore the 2-position limit, so the real cost is smaller. Rules stay frozen to Dec 2.</p>
       </div>
       <div class="card">
         <h3>Missed trades, by setup</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Stacked",-352,"11 trades"],["Absorption",-115,"8"]]'></div>
+        <div class="chart" data-drill="missed" data-chart="hbar" data-rows='[["Stacked",-352,"11 trades"],["Absorption",-115,"8"]]'></div>
         <p class="cap">Alerts the plan could not take (2 open already, or cooldown after a stop) would have lost $467. The position limit helped again.</p>
       </div>
     </div>
@@ -136,31 +136,31 @@ a{color:var(--accent)}
 
     <div class="card">
       <h3>What each rule saved (shadow trades)</h3>
-      <div class="chart" data-chart="hbar" data-rows='[["Divergence off",-780,"135 trades · 47% wins"],["Min stop 0.15%",-497,"98 trades · 41%"],["Absorption stops 13:30",-620,"26 trades · 31%"],["Lunch pause 11:00-12:30",-289,"29 trades · 38%"],["Stacked stops 11:00",42,"13 trades · 54%"]]'></div>
+      <div class="chart" data-drill="shadow" data-chart="hbar" data-rows='[["Divergence off",-780,"135 trades · 47% wins"],["Min stop 0.15%",-497,"98 trades · 41%"],["Absorption stops 13:30",-620,"26 trades · 31%"],["Lunch pause 11:00-12:30",-289,"29 trades · 38%"],["Stacked stops 11:00",42,"13 trades · 54%"]]'></div>
       <p class="cap">What the skipped trades would have made. Red bars are losses the rules avoided. Shadow trades don't use position slots, so only some would really have been taken. −$1,658 of the −$2,144 came after 13:00.</p>
     </div>
 
     <div class="card" id="shadow-days">
       <h3>What the new rules skipped, per day</h3>
-      <div class="chart" data-chart="vbar" data-rows='[["Oct 28",-453],["Oct 29",222],["Oct 30",249],["Nov 2",-119],["Nov 3",-172],["Nov 4",-129],["Nov 5",-684],["Nov 6",-980],["Nov 9",-559],["Nov 10",-85],["Nov 11",127],["Nov 12",-682],["Nov 13",-670],["Nov 16",-20],["Nov 18*",-2144]]'></div>
+      <div class="chart" data-drill="shadow" data-chart="vbar" data-rows='[["Oct 28",-453],["Oct 29",222],["Oct 30",249],["Nov 2",-119],["Nov 3",-172],["Nov 4",-129],["Nov 5",-684],["Nov 6",-980],["Nov 9",-559],["Nov 10",-85],["Nov 11",127],["Nov 12",-682],["Nov 13",-670],["Nov 16",-20],["Nov 18*",-2144]]'></div>
       <p class="cap">What the trades the new rules skip would have made each day. Red = losses avoided, green = profit given up. Oct 28 to Nov 16 come from the backtest (old rules minus divergence off + 0.15% min stop + lunch pause, slots included). *Nov 18 is the bot's live shadow log, the first full day it was recorded; it also includes the stacked 11:00 and absorption 13:30 cut-offs and ignores slots, so it runs larger. The rules helped on 12 of 15 days: about <span class="num g">$3,960</span> over the 14 backtest days, plus <span class="num g">$2,144</span> on Nov 18.</p>
     </div>
 
     <div class="card">
       <h3>Nov 18 shadow trades by hour</h3>
-      <div class="chart" data-chart="hbar" data-rows='[["9:31-10:00",-216,"divergence −$144, min stop −$72"],["10:00-11:00",-258,"divergence −$272"],["11:00-12:00",-71,"lunch pause −$144, min stop +$74"],["12:00-13:00",59,"divergence +$202, stacked +$117, pause −$145"],["13:00-14:00",-275,"min stop −$147, divergence −$129"],["14:00-15:00",-786,"divergence −$459, min stop −$245"],["15:00-15:45",-597,"absorption after 13:30 −$489"]]'></div>
+      <div class="chart" data-drill="shadow" data-chart="hbar" data-rows='[["9:31-10:00",-216,"divergence −$144, min stop −$72"],["10:00-11:00",-258,"divergence −$272"],["11:00-12:00",-71,"lunch pause −$144, min stop +$74"],["12:00-13:00",59,"divergence +$202, stacked +$117, pause −$145"],["13:00-14:00",-275,"min stop −$147, divergence −$129"],["14:00-15:00",-786,"divergence −$459, min stop −$245"],["15:00-15:45",-597,"absorption after 13:30 −$489"]]'></div>
       <p class="cap">301 skipped trades, −$2,144 in all. The afternoon (13:00 onward) holds −$1,658 of it. Only 12:00-13:00 would have made money.</p>
     </div>
 
     <div class="two">
       <div class="card">
         <h3>Real trades by time of day</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["9:34-9:54",-173,"7 trades"],["10:00-11:00",529,"23 trades"],["11:00-12:30",-38,"1 (Plan 2)"],["12:30-13:30",-33,"14 trades"]]'></div>
+        <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["9:34-9:54",-173,"7 trades"],["10:00-11:00",529,"23 trades"],["11:00-12:30",-38,"1 (Plan 2)"],["12:30-13:30",-33,"14 trades"]]'></div>
         <p class="cap">Opening losers were TSLA, AMZN, PLTR and MSFT on wide stops, about $125 each.</p>
       </div>
       <div class="card">
         <h3>The 9:31-9:45 window, last 5 days</h3>
-        <div class="chart" data-chart="vbar" data-rows='[["Nov 12",-161],["Nov 13",-250],["Nov 16",-413],["Nov 17",263],["Nov 18",-95]]'></div>
+        <div class="chart" data-drill="taken" data-chart="vbar" data-rows='[["Nov 12",-161],["Nov 13",-250],["Nov 16",-413],["Nov 17",263],["Nov 18",-95]]'></div>
         <p class="cap">Lost on 4 of the last 5 days. It made money every day Nov 5-11.</p>
       </div>
     </div>
@@ -168,7 +168,7 @@ a{color:var(--accent)}
     <div class="two">
       <div class="card">
         <h3>By setup</h3>
-        <div class="chart" data-chart="hbar" data-rows='[["Stacked",172,"16 · 50% wins"],["80% rule",160,"3"],["Absorption",6,"24 · 46%"],["Value fade",-53,"2"]]'></div>
+        <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["Stacked",172,"16 · 50% wins"],["80% rule",160,"3"],["Absorption",6,"24 · 46%"],["Value fade",-53,"2"]]'></div>
       </div>
       <div class="card">
         <h3>Why paper made less than the bot</h3>
@@ -185,7 +185,7 @@ a{color:var(--accent)}
 
     <div class="card" id="late-fills">
       <h3>Late paper fills by day: what patch45 would have cancelled</h3>
-      <div class="chart" data-chart="vbar" data-rows='[["Nov 12 (1)",-16],["Nov 13 (10)",209],["Nov 16 (1)",123],["Nov 17 (0)",0],["Nov 18 (1)",-135]]'></div>
+      <div class="chart" data-drill="paper" data-chart="vbar" data-rows='[["Nov 12 (1)",-16],["Nov 13 (10)",209],["Nov 16 (1)",123],["Nov 17 (0)",0],["Nov 18 (1)",-135]]'></div>
       <p class="cap">Paper trades whose entry filled after the bot had already expired the alert. With patch45 these orders are cancelled, so paper would have missed them. 13 trades, net <span class="num g">+$181</span>: Nov 13 carries it because paper then traded all day (the 9:31-11:00 paper window started Nov 16) and divergence was still on. Since Nov 16 it is 2 trades, net −$12.</p>
       <div class="tbl" style="margin-top:10px"><table>
         <tr><th>Day</th><th>Trade</th><th>Alert (ET)</th><th class="r">Paper $</th></tr>
@@ -289,7 +289,7 @@ a{color:var(--accent)}
 
     <div class="card">
       <h3>Daily result, Plan 1 main setups</h3>
-      <div class="chart" data-chart="vbar" data-rows='[["Nov 4",345],["Nov 5",2202],["Nov 6",-485],["Nov 9",-197],["Nov 10",407],["Nov 11",670],["Nov 12",-463],["Nov 13",-844],["Nov 16",-626]]'></div>
+      <div class="chart" data-drill="taken" data-chart="vbar" data-rows='[["Nov 4",345],["Nov 5",2202],["Nov 6",-485],["Nov 9",-197],["Nov 10",407],["Nov 11",670],["Nov 12",-463],["Nov 13",-844],["Nov 16",-626]]'></div>
       <p class="cap">Nov 16 to 11:35. Nov 12 was cut short by the old 1.5% daily stop.</p>
     </div>
 
@@ -308,7 +308,7 @@ a{color:var(--accent)}
 
     <div class="card">
       <h3>Nov 16 morning by time</h3>
-      <div class="chart" data-chart="hbar" data-rows='[["09:31-09:40",-521,"7 trades · four stacked shorts stopped"],["09:40-10:00",-96,"9"],["10:00-10:30",-151,"7"],["10:30-11:00",-19,"15"],["11:00-11:35",-44,"14"]]'></div>
+      <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["09:31-09:40",-521,"7 trades · four stacked shorts stopped"],["09:40-10:00",-96,"9"],["10:00-10:30",-151,"7"],["10:30-11:00",-19,"15"],["11:00-11:35",-44,"14"]]'></div>
       <p class="cap">Two thirds of the loss came in the first nine minutes. Paper was −$1,178 against the bot's −$936 on the same 43 alerts.</p>
     </div>
     <div class="trades" data-day="2026-11-16"></div>
@@ -337,7 +337,7 @@ function hbar(box,rows,u){
     if(r[2])s.appendChild(el("text",{x:0,y:y+25,class:"m","font-size":"10.5"},r[2]));
     s.appendChild(el("rect",{x,y:y+4,width:w,height:16,rx:2,fill:v<0?"var(--loss)":"var(--gain)"}));
     const t=el("text",{x:v<0?x-6:x+w+6,y:y+16,class:"v","text-anchor":v<0?"end":"start"},fmt(v,u));t.style.fill=v<0?"var(--loss)":"var(--gain)";s.appendChild(t);
-  });box.appendChild(s)}
+  });rows.forEach((r,i)=>s.appendChild(el("rect",{class:"hit","data-i":i,x:0,y:top+i*rh,width:W,height:rh,fill:"transparent"})));box.appendChild(s)}
 function vbar(box,rows){
   const W=600,H=220,pt=22,pb=26,n=rows.length,bw=(W-20)/n;const mx=Math.max(...rows.map(r=>Math.max(r[1],0))),mn=Math.min(...rows.map(r=>Math.min(r[1],0)));
   const sc=(H-pt-pb)/(mx-mn||1);const zero=pt+mx*sc;const s=svg(W,H);
@@ -348,7 +348,8 @@ function vbar(box,rows){
     if(v<0&&y+h+13>H-pb+4){t.setAttribute("y",zero-5)}
     if(n>10){t.style.fontSize="9.5px"}
     s.appendChild(t);
-    {const lb=el("text",{x:x+w/2,y:H-6,class:"m","text-anchor":"middle"},r[0]);if(n>10)lb.style.fontSize="9.5px";s.appendChild(lb);}});box.appendChild(s)}
+    {const lb=el("text",{x:x+w/2,y:H-6,class:"m","text-anchor":"middle"},r[0]);if(n>10)lb.style.fontSize="9.5px";s.appendChild(lb);}});
+  rows.forEach((r,i)=>s.appendChild(el("rect",{class:"hit","data-i":i,x:10+i*bw,y:0,width:bw,height:H,fill:"transparent"})));box.appendChild(s)}
 function pair(box,rows){
   const W=640,H=250,pt=16,pb=28,n=rows.length,bw=(W-50)/n;const vals=rows.flatMap(r=>[r[1],r[2]]);const mx=Math.max(...vals,0),mn=Math.min(...vals,0);
   const sc=(H-pt-pb)/(mx-mn);const zero=pt+mx*sc;const s=svg(W,H);
@@ -418,6 +419,13 @@ document.querySelectorAll("[data-chart]").forEach(b=>{try{F[b.dataset.chart](b,J
 .tx-chart text{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
 .tx-chart .nob{font-size:13px;color:var(--muted);padding:18px;border:1px dashed var(--line);border-radius:6px;background:var(--panel)}
 .tx-more{margin-top:10px;font:inherit;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--accent);border-radius:6px;padding:5px 12px;cursor:pointer}
+.chart .hit.on{cursor:pointer}
+.chart .hit.on:hover{fill:var(--accent);fill-opacity:.09}
+.chart .hit.on:focus-visible{outline:none;stroke:var(--accent);stroke-width:2}
+.kpi.on{cursor:pointer}
+.kpi.on:hover,.kpi.on:focus-visible{border-color:var(--accent);outline:none}
+.drill-hint{font-size:12px;color:var(--accent);margin-top:6px}
+.tx-flt{font:inherit;font-size:12.5px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);border-radius:6px;padding:3px 9px;cursor:pointer}
 @media (max-width:700px){.tx-det{grid-template-columns:1fr}}
 </style>
 <script>
@@ -458,6 +466,8 @@ function rowsOf(D){
   const res=t=>S.kind==="paper"?t.pnl:(t.status==="closed"?t.r:null);
   if(S.res==="win")rows=rows.filter(t=>res(t)>0);
   if(S.res==="loss")rows=rows.filter(t=>res(t)<0);
+  if(S.time)rows=rows.filter(t=>t.time>=S.time[0]&&t.time<S.time[1]);
+  if(S.reason)rows=rows.filter(t=>(t.reason||"").includes(S.reason));
   if(S.res==="nofill")rows=rows.filter(t=>S.kind==="paper"?!t.filled:t.status!=="closed");
   if(S.res==="filled")rows=rows.filter(t=>S.kind==="paper"?t.filled:t.status==="closed");
   const col=cols(S.kind).find(c=>c[0]===S.sort)||cols(S.kind)[0];
@@ -482,11 +492,12 @@ function render(D){
   if(S.setup&&!setups.includes(S.setup))S.setup="";if(S.sym&&!syms.includes(S.sym))S.sym="";
   const body=D.box.querySelector(".tx-body");body.textContent="";
   const tabs=h("div",{class:"tx-tabs",role:"group","aria-label":"Trade list"});
-  KINDS.forEach(([k,lab])=>{if(!counts[k])return;tabs.append(h("button",{type:"button","aria-pressed":S.kind===k,onclick:()=>{S.kind=k;S.open=null;S.limit=60;S.sort=k==="shadow"?"usd":"time";S.dir=1;render(D)}},lab,h("span",{class:"c"},counts[k])))});
+  KINDS.forEach(([k,lab])=>{if(!counts[k])return;tabs.append(h("button",{type:"button","aria-pressed":S.kind===k,onclick:()=>{S.kind=k;S.open=null;S.limit=60;S.time=null;S.reason="";S.drill="";S.sort=k==="shadow"?"usd":"time";S.dir=1;render(D)}},lab,h("span",{class:"c"},counts[k])))});
   const sel=(id,lab,opts,val,fn,name)=>{const s=h("select",{id,"aria-label":lab,onchange:e=>{fn(e.target.value);S.open=null;render(D)}},h("option",{value:""},"All "+lab.toLowerCase()));opts.forEach(o=>{const op=h("option",{value:o},name?name(o):o);if(o===val)op.selected=true;s.append(op)});return s};
   const chips=h("div",{class:"tx-chips",role:"group","aria-label":"Result"});
   [["","All"],["win","Wins"],["loss","Losses"],["nofill","Not filled"]].forEach(([v,lab])=>chips.append(h("button",{type:"button","aria-pressed":(S.res||"")===v,onclick:()=>{S.res=v;S.open=null;render(D)}},lab)));
   const bar=h("div",{class:"tx-bar"},sel("tx-setup-"+D.day,"Setups",setups,S.setup,v=>S.setup=v,sname),sel("tx-sym-"+D.day,"Symbols",syms,S.sym,v=>S.sym=v),chips);
+  if(S.drill)bar.append(h("button",{type:"button",class:"tx-flt",title:"Clear this filter",onclick:()=>{S.time=null;S.reason="";S.drill="";S.open=null;render(D)}},S.drill+" ✕"));
   const rows=rowsOf(D);
   const closed=S.kind==="paper"?rows.filter(t=>t.filled):rows.filter(t=>t.status==="closed");
   const tot$=closed.reduce((a,t)=>a+((S.kind==="paper"?t.pnl:t.usd)||0),0),totR=closed.reduce((a,t)=>a+(t.r||0),0),wins=closed.filter(t=>(S.kind==="paper"?t.pnl:t.r)>0).length;
@@ -615,6 +626,46 @@ document.querySelectorAll(".trades[data-day]").forEach(box=>{
   box.append(h("div",{class:"hd"},h("h3",{},"Every trade"),h("p",{class:"cap"},"Click a row for the chart and details. The # link points straight at that trade.")),h("div",{class:"tx-body"}));
   if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();load(D).catch(()=>{})}},{rootMargin:"800px"});io.observe(box)}else load(D).catch(()=>{});
 });
+// ---- Drill-down: chart bars and KPI tiles open the matching trades ----
+const SETUP_BY_NAME=Object.fromEntries(Object.entries(SETUP).map(([k,v])=>[v.toLowerCase(),k]));
+const RULES=[[/divergence/i,"delta divergence is off","Divergence off"],[/min stop|0\.15%/i,"% of price","Min stop 0.15%"],[/lunch/i,"Plan 1 paused","Lunch pause"],
+  [/stacked stops/i,"Stacked imbalance stops at","Stacked stops 11:00"],[/absorption stops/i,"Absorption fade stops at","Absorption stops 13:30"]];
+const pad=t=>t.length===4?"0"+t:t;
+function target(label,kind){
+  const f={kind};
+  if(kind==="shadow"){const r=RULES.find(x=>x[0].test(label));if(r){f.reason=r[1];f.drill="Skipped by: "+r[2];return f}}
+  const tm=/^(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2}|close)/.exec(label);
+  if(tm){f.time=[pad(tm[1]),tm[2]==="close"?"16:01":pad(tm[2])];f.drill=tm[1]+"-"+tm[2];return f}
+  const st=SETUP_BY_NAME[label.trim().toLowerCase()];if(st){f.setup=st;return f}
+  return null;
+}
+function drill(D,f){
+  load(D).then(()=>{Object.assign(D.state,{kind:f.kind,setup:f.setup||"",sym:"",res:"",time:f.time||null,reason:f.reason||"",drill:f.drill||"",open:null,limit:60,sort:"time",dir:1});
+    const has=k=>k==="paper"?D.data.paper.length:D.data.trades.some(t=>t.kind===k);
+    if(!has(D.state.kind)){D.state.kind="taken";D.state.reason="";D.state.drill=D.state.time?D.state.drill:""}
+    render(D);D.box.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}).catch(()=>{});
+}
+const arm=(node,fn,tip)=>{node.classList.add("on");node.setAttribute("tabindex","0");node.setAttribute("role","button");
+  const t=document.createElementNS(NS,"title");t.textContent=tip;if(node instanceof SVGElement)node.append(t);else node.title=tip;
+  node.addEventListener("click",fn);node.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn()}})};
+const dayOfLabel=l=>{const m=/^(Oct|Nov|Dec)\s+(\d{1,2})/i.exec(l);return m?m[1].toLowerCase()+(+m[2]):null};
+document.querySelectorAll(".chart[data-drill]").forEach(c=>{
+  const kind=c.dataset.drill,rows=JSON.parse(c.dataset.rows),sec=c.closest("section"),own=sec&&sec.querySelector(".trades[data-day]");
+  let any=false;
+  c.querySelectorAll("rect.hit").forEach(hit=>{const r=rows[+hit.dataset.i];if(!r)return;const lab=String(r[0]);
+    const dk=dayOfLabel(lab);
+    if(dk){const D=days[dk];if(!D){hit.remove();return}
+      arm(hit,()=>drill(D,{kind}),`Show ${lab.replace(/\s*[*(].*$/,"")} ${kind==="taken"?"trades":kind==="paper"?"Webull paper trades":kind+" trades"}`);any=true;return}
+    const D=own&&days[dkey(own.dataset.day)],f=D&&target(lab,kind);
+    if(!f){hit.remove();return}
+    arm(hit,()=>drill(D,f),`Show these trades: ${lab}`);any=true});
+  if(any){const card=c.closest(".card");const hint=h("p",{class:"drill-hint"},"Click a bar to open those trades.");(card||c.parentNode).insertBefore(hint,c.nextSibling)}
+});
+document.querySelectorAll("section").forEach(sec=>{const own=sec.querySelector(".trades[data-day]");if(!own)return;const D=days[dkey(own.dataset.day)];
+  sec.querySelectorAll(".kpi").forEach(k=>{const n=(k.querySelector(".k")||{}).textContent||"";
+    const kind=/shadow|skipped/i.test(n)?"shadow":/missed/i.test(n)?"missed":/webull|paper/i.test(n)?"paper":/^bot$/i.test(n.trim())?"taken":null;
+    if(!kind||(kind!=="paper"&&kind!=="taken"&&!sec.querySelector(".kpi")))return;
+    arm(k,()=>drill(D,{kind}),"Open these trades")})});
 window.addEventListener("hashchange",openFromHash);openFromHash();
 })();
 </script>
