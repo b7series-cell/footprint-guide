@@ -66,8 +66,32 @@ a{color:var(--accent)}
 <div class="wrap">
 <header>
   <h1>Order Flow - Footprint bot Review</h1>
-  <p class="sub">Why the footprint bot loses, what the shadow trades show, and what changed. Newest first. Dollars are the bot's own tracking unless marked as paper.</p>
+  <p class="sub">Why the footprint bot loses, what the shadow trades show, and what changed. Every trading day since Nov 2 has a review with its best and worst trades, checks and ideas to test, and every trade links to its chart. Newest first. Dollars are the bot's own tracking unless marked as paper.</p>
 </header>
+
+<!-- ===================== PATTERNS ACROSS ALL DAYS ===================== -->
+<section class="entry" id="patterns">
+  <div class="rail"><div class="d"><b>Nov 2-19</b>14 sessions<br><span class="tag">Patterns</span></div></div>
+  <div class="body">
+    <h2>What every day has in common</h2>
+    <p class="lead">Across 1,450 closed trades the bot made <span class="num g">+$5,286</span> but <span class="num l">−22.7R</span>. The R loss comes mostly from tight-stop trades that the position cap keeps small. These patterns repeat on most days, and each one links into the day reviews below. They are analysis only: the rules stay frozen until the Dec 2 review.</p>
+    <div class="card">
+      <h3>Where the money leaks, and what to test</h3>
+      <div class="tbl"><table>
+        <tr><th>Pattern</th><th class="r">Trades</th><th class="r">Result</th><th>Test at Dec 2</th></tr>
+        <tr><td>Stopped, then went 1.5R+ the right way within 30 min. Median stop 0.13% of price, against 0.16% for all stopped trades. Stacked is worst: 88 of its 205 stopped trades.</td><td class="r num">192 of 547 stops</td><td class="r num l">35% of stops</td><td>The 0.15% minimum (live since Nov 17) covers part of it. Next, test a stacked stop beyond the imbalance zone, or waiting for a retest.</td></tr>
+        <tr><td>Re-entered within 30 min of a stop, same stock and same side</td><td class="r num">344</td><td class="r num l">−$669 · −59.2R</td><td>A 30-minute cooldown after a stop. Note that Nov 5 re-entries made $500.</td></tr>
+        <tr><td>Reached +0.7R or more, then hit the full stop</td><td class="r num">94</td><td class="r num l">−$4,273 · −107R</td><td>Move to breakeven at +0.7R, checked against the winners it would also cut.</td></tr>
+        <tr><td>Stacked with 3 imbalances, against 4</td><td class="r num">334 / 97</td><td class="r num"><span class="l">−21.5R</span> / <span class="g">+15.0R</span></td><td>Require 4+ imbalances, or a top-third signal delta (top third +23.3R / +$1,997, lower two thirds −37.6R).</td></tr>
+        <tr><td>Absorption by share of the bar absorbed: 30-50% works, under 30% and 70%+ don't</td><td class="r num">188</td><td class="r num g">+$733 · +4.2R</td><td>Only take absorption bars where 30-70% of the volume was absorbed.</td></tr>
+        <tr><td>Delta exits (closing early on delta)</td><td class="r num">276</td><td class="r num l">−$1,755 · −30.5R</td><td>Holding to the stop or target would have made about $320 more (6.5R). Small, but worth testing.</td></tr>
+        <tr><td>Divergence longs, against shorts</td><td class="r num">172 / 259</td><td class="r num"><span class="l">−15.4R</span> / <span class="g">+16.2R</span></td><td>Divergence is off. If it returns, shorts only.</td></tr>
+        <tr><td>Trades at a prior-day or premarket level, against none</td><td class="r num">131 / 839</td><td class="r num">no better</td><td>The levels don't add edge for stacked or absorption.</td></tr>
+      </table></div>
+      <p class="cap">Measured on the bot's own trade log, with fills and exits replayed on Nasdaq-only 1-minute bars through Nov 18 (Nov 19 has no bars yet). Each day below has a "Checks" table that opens the trades behind each line.</p>
+    </div>
+  </div>
+</section>
 
 <!-- ===================== NOV 19 ===================== -->
 <section class="entry" id="nov19">
@@ -116,6 +140,16 @@ a{color:var(--accent)}
         <li>Webull refused one bracket (AAPL 10:16). Peak margin $117,534 at 9:35.</li>
       </ul>
       <p class="cap">GOOG 10:51: paper filled at 10:52:11 and both halves were stopped at 286.74 by 10:53:42; the bot booked its target instead. Confirmed on the bars: the bot's Nasdaq-only bars topped at 286.705 (10:53), half a cent under its 286.71 stop, so it held on and booked both targets when GOOG fell to 285.37 at 11:01. The bot can miss stops that the full market hits.</p>
+    </div>
+    <div class="daybrk" data-day="2026-11-19" data-parts="best,worst,checks">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>Add a 30-minute cooldown after a stop on the same stock and side. NVDA was re-shorted at 10:46, 20 minutes after its 10:25 stop (−$74).</li>
+        <li>Use limit entries after fast moves. AMD stacked shorts filled 50-70c worse on paper (about −$110).</li>
+        <li>Give the Plan 2 80% rule a minimum stop. META and MSFT stops of 0.01-0.03% cost 2.4R for $13.</li>
+        <li>Check stops against the full market. GOOG 10:51: the bot's Nasdaq-only bars missed a stop that the consolidated market hit.</li>
+        <li>All of these are on the Dec 2 list; rules stay frozen until then.</li>
+      </ul></div>
     </div>
     <div class="trades" data-day="2026-11-19"></div>
   </div>
@@ -224,7 +258,33 @@ a{color:var(--accent)}
         <b>4</b><span>Review Plan 2's value fade and single print with more days.</span>
       </div>
     </div>
+    <div class="daybrk" data-day="2026-11-18" data-parts="best,worst,checks">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>Delta exits cost $229 on 9 trades. Test holding to the stop or target.</li>
+        <li>9:31-9:45 has lost on 4 of the last 5 days, so test a 9:45 start for Plan 1.</li>
+        <li>Cancel paper stop entries at the alert's expiry so paper and the bot hold the same trades (patch45).</li>
+      </ul></div>
+    </div>
     <div class="trades" data-day="2026-11-18"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 17 ===================== -->
+<section class="entry" id="nov17">
+  <div class="rail"><div class="d"><b>Nov 17</b>Tue · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>First day of the new rules: stacked carried it, absorption gave it back</h2>
+    <p class="lead">The bot lost <span class="num l">−$122</span> (−6.9R) on 67 trades. Divergence was off, the 0.15% minimum stop and the lunch pause were on. Stacked made <span class="num g">+$679</span> (+7.5R) but absorption lost <span class="num l">$523</span>. Webull paper made <span class="num g">+$277</span> against the bot's +$496 on the same 26 fills. The gap is mostly AMD 10:49: its target was touched but never filled.</p>
+    <div class="daybrk" data-day="2026-11-17">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>15:00 to the close lost $424 on 10 trades. Late-day trades are what the absorption 13:30 cut-off (from Nov 18) removes.</li>
+        <li>Two absorption shorts (AMD 10:20, PLTR 10:30) were stopped within minutes and then ran 4-5R their way. The absorbed bar can keep going one more push, so test entering on the next bar's close back inside.</li>
+        <li>Value fade lost $218 on 4 trades. Plan 2 needs more days before deciding anything.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-17"></div>
   </div>
 </section>
 
@@ -311,7 +371,193 @@ a{color:var(--accent)}
       <div class="chart" data-drill="taken" data-chart="hbar" data-rows='[["09:31-09:40",-521,"7 trades · four stacked shorts stopped"],["09:40-10:00",-96,"9"],["10:00-10:30",-151,"7"],["10:30-11:00",-19,"15"],["11:00-11:35",-44,"14"]]'></div>
       <p class="cap">Two thirds of the loss came in the first nine minutes. Paper was −$1,178 against the bot's −$936 on the same 43 alerts.</p>
     </div>
+    <div class="daybrk" data-day="2026-11-16" data-parts="kpis,charts,best,worst,checks">
+      <h3>Full day (the notes above stop at 11:35)</h3>
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>The open lost $521 in 9 minutes on four stacked shorts. 9:31-9:45 is now negative on 5 of 12 days.</li>
+        <li>Longs lost $763 for the full day while shorts made $847.</li>
+        <li>Paper lost $1,178 against the bot's −$954 on the same trades. Entry slippage and delta-exit market closes explain the gap.</li>
+      </ul></div>
+    </div>
     <div class="trades" data-day="2026-11-16"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 13 ===================== -->
+<section class="entry" id="nov13">
+  <div class="rail"><div class="d"><b>Nov 13</b>Fri · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Lost all day: stacked and absorption both failed, divergence was the only winner</h2>
+    <p class="lead">The bot lost <span class="num l">−$837</span> (−19.0R) on 140 trades. Paper lost <span class="num l">$923</span>. The daily loss limit was 10%, so nothing stopped it. Stacked lost $784 and absorption $623, while divergence made +$565. Lunch (11:00-12:30) alone lost $667, and NVDA lost $572 by itself.</p>
+    <div class="daybrk" data-day="2026-11-13">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>Re-entries hurt most. 39 trades came within 30 minutes of a stop on the same stock and side, for −12.9R and −$667. A 30-minute cooldown after a stop is on the Dec 2 list.</li>
+        <li>35 trades were stopped within 2 minutes (−$1,660). The 0.15% minimum stop (from Nov 17) removes most of the tightest ones.</li>
+        <li>The 1.5% daily stop would have halted Plan 1 at 11:43 at −$420 instead of −$844. Keep a daily limit for live money even though the paper test runs at 10%.</li>
+        <li>The lunch pause now in place (no new Plan 1 trades 11:00-12:30) would have skipped the worst window.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-13"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 12 ===================== -->
+<section class="entry" id="nov12">
+  <div class="rail"><div class="d"><b>Nov 12</b>Thu · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Halted at 9:45 after long entries into the open failed</h2>
+    <p class="lead">Only 14 trades. The bot lost <span class="num l">−$678</span> (−8.8R) because 11 trades between 9:32 and 9:45 lost $465 and hit the then 1.5% daily stop. 11 of 14 were longs into an opening that sold off. It was the first Webull paper day: paper lost <span class="num l">$546</span> against the bot's −$463 on the same trades, and two shorts were rejected (CAN_NOT_SELL_SHORT on MSFT and AAPL). The LVLS list was stale that day.</p>
+    <div class="daybrk" data-day="2026-11-12">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>Longs at the open into overhead supply (AVGO under weekly supply, TSLA at the prior VAH) were stopped fast. Stacked longs have barely broken even over the whole test while stacked shorts carry the setup.</li>
+        <li>The 9:31-9:45 window has lost on 5 of the last 12 days. A 9:45 start for Plan 1 is the candidate to test.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-12"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 11 ===================== -->
+<section class="entry" id="nov11">
+  <div class="rail"><div class="d"><b>Nov 11</b>Wed · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Dollars up, R down: longs worked, shorts didn't</h2>
+    <p class="lead">The bot made <span class="num g">+$611</span> but −7.9R on 143 trades. The position cap shrinks size on tight-stop trades, so the dollars beat the R. Longs made +$769 (+9.8R) while shorts lost $158 (−17.7R). Absorption made +$490 and divergence lost 10.7R. After 13:30 the bot lost $427.</p>
+    <div class="daybrk" data-day="2026-11-11">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>29 re-entries within 30 minutes of a stop lost 18.3R, the biggest R leak of the day.</li>
+        <li>82 trades had stops under 0.15% of price. They lost 15.3R but little money, because the cap keeps them small. That's noise, not edge, and the 0.15% minimum now removes them.</li>
+        <li>The afternoon (13:30 to close) lost $427 and 16.3R.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-11"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 10 ===================== -->
+<section class="entry" id="nov10">
+  <div class="rail"><div class="d"><b>Nov 10</b>Tue · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Flat day: good 9:45-10:00, bad 10:00-11:00</h2>
+    <p class="lead">The bot made <span class="num g">+$178</span> (−6.5R) on 155 trades. 9:45-10:00 made $486, then 10:00-11:00 gave back $524. Longs made +$569 and shorts lost $391. Stacked (+$411) and absorption (+$363) were positive; divergence (−$367) and the 80% rule (−$209) were not.</p>
+    <div class="daybrk" data-day="2026-11-10">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>11 trades reached +0.7R or more and were then stopped for a full loss (−$513). A move to breakeven at +0.7R would have kept that money. That's worth a backtest.</li>
+        <li>47 re-entries within 30 minutes of a stop lost 12.2R.</li>
+        <li>The AMZN 80% rule long sat 98 minutes and was stopped. The 80% rule is 1 for 12 over the test.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-10"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 9 ===================== -->
+<section class="entry" id="nov9">
+  <div class="rail"><div class="d"><b>Nov 9</b>Mon · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Divergence lost 18.7R; absorption held up</h2>
+    <p class="lead">The bot lost <span class="num l">−$149</span> (−12.8R) on 162 trades. Divergence lost <span class="num l">$692</span> (−18.7R), and its stopped SNDK longs ran 2.7-4.6R in the right direction within 30 minutes of being stopped. Absorption made +$425 and stacked +$70. 13:30-15:00 lost 10.5R.</p>
+    <div class="daybrk" data-day="2026-11-09">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>42 trades were stopped within 2 minutes (−$1,546, −44.6R). The stop sat inside the signal bar's own range.</li>
+        <li>Divergence entries were early: the turn came, but after the stop. Divergence has been off since Nov 17. If it comes back, it needs a confirmation bar and a wider stop.</li>
+        <li>93 trades had stops under 0.15%.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-09"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 6 ===================== -->
+<section class="entry" id="nov6">
+  <div class="rail"><div class="d"><b>Nov 6</b>Fri · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Small loss; no Plan 1 trades after 11:37</h2>
+    <p class="lead">The bot lost <span class="num l">−$113</span> (−2.3R) on 61 trades. Plan 1 went quiet after 11:37, most likely the daily loss halt, which then gave no alert. The best trade of the day was a META value fade short held to the close, <span class="num g">+$490</span> (+9.1R). MU lost $478. The open (9:31-9:45) made $461, and everything after it lost.</p>
+    <div class="daybrk" data-day="2026-11-06">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>NVDA 9:31 and MU 9:55 were stopped in under a minute, then went 1.3-1.9R their way. Opening-bar stops are too tight.</li>
+        <li>Halts are now visible: patch27 raises a stop alarm and posts to Slack.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-06"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 5 ===================== -->
+<section class="entry" id="nov5">
+  <div class="rail"><div class="d"><b>Nov 5</b>Thu · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Best day of the test: stacked shorts in the morning</h2>
+    <p class="lead">The bot made <span class="num g">+$2,275</span> (+21.5R) on 193 trades. Stacked made +$2,310 (+23.3R), and 184 of the 193 trades were shorts (+$2,735). 9:31-11:00 made <span class="num g">+$3,184</span>, and lunch (11:00-12:30) gave back $1,138. Without this day the whole test through Nov 16 was roughly break-even.</p>
+    <div class="daybrk" data-day="2026-11-05">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>Lunch lost $1,138 on 40 trades even on the best day. That's the reason for the lunch pause now in place.</li>
+        <li>Divergence lost $541. SNDK divergence 10:31 was stopped in 2 minutes, then ran 5.2R its way.</li>
+        <li>55 re-entries within 30 minutes of a stop made money here (+$500), so a cooldown has a cost on trend days like this one. Test it on all days, not just the bad ones.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-05"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 4 ===================== -->
+<section class="entry" id="nov4">
+  <div class="rail"><div class="d"><b>Nov 4</b>Wed · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Break-even: shorts paid, longs and lunch lost</h2>
+    <p class="lead">The bot made <span class="num g">+$433</span> (+0.5R) on 141 trades. Shorts made +$922 and longs lost $489. 11:00-12:30 lost $642, then 13:30-15:00 made $761. AMD alone made $491 across value fade, divergence and absorption shorts.</p>
+    <div class="daybrk" data-day="2026-11-04">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>32 trades were stopped within 2 minutes (−$1,123).</li>
+        <li>Early exits (delta, breakeven) closed 39 trades for −$85. Holding them to the stop or target would have made about +$430.</li>
+        <li>PLTR absorption longs were stopped twice in the morning.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-04"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 3 ===================== -->
+<section class="entry" id="nov3">
+  <div class="rail"><div class="d"><b>Nov 3</b>Tue · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Halted at 11:11 after a run of losses</h2>
+    <p class="lead">The bot lost <span class="num l">−$204</span> (−7.5R) on 40 trades. Three straight losses hit the old max_consecutive_losses 3 at 11:11 (it was raised to 10 afterwards). Divergence was the only winner (+$267). Absorption lost $283, and PLTR and MU absorption longs were stopped without ever moving their way.</p>
+    <div class="daybrk" data-day="2026-11-03">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>13 trades were stopped within 2 minutes (−$521).</li>
+        <li>5 re-entries within 30 minutes of a stop lost $282, half the day's stop losses.</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-03"></div>
+  </div>
+</section>
+
+<!-- ===================== NOV 2 ===================== -->
+<section class="entry" id="nov2">
+  <div class="rail"><div class="d"><b>Nov 2</b>Mon · day review<br><span class="tag">Day</span></div></div>
+  <div class="body">
+    <h2>Afternoon start: divergence carried it</h2>
+    <p class="lead">The bot started late morning and made <span class="num g">+$1,056</span> (−12.7R) on 71 trades. Divergence made +$825 (+26.9R): NVDA short 13:37 held to the close for +10.6R, and AVGO 13:37 made +7.2R. Stacked lost 40.4R but only $19, because 54 trades had stops under 0.15% and the position cap kept them tiny.</p>
+    <div class="daybrk" data-day="2026-11-02">
+      <div class="brk-auto"></div>
+      <div class="improve"><h3>How to improve</h3><ul>
+        <li>35 trades were stopped within 2 minutes. Most were tight-stop stacked trades: lots of R lost on very little money.</li>
+        <li>14 trades reached +0.7R or more and were then stopped (−20.6R).</li>
+      </ul></div>
+    </div>
+    <div class="trades" data-day="2026-11-02"></div>
   </div>
 </section>
 
@@ -369,7 +615,7 @@ function flip(box,rows){
   s.appendChild(el("line",{x1:mid,x2:mid,y1:0,y2:H-18,stroke:"var(--fg)","stroke-dasharray":"2 3"}));
   s.appendChild(el("text",{x:mid,y:H-4,class:"m","text-anchor":"middle","font-size":"10.5"},"50% coin flip · bot's side (left) vs flipped (right)"));
   box.appendChild(s)}
-const F={hbar,vbar,pair,flip};
+const F={hbar,vbar,pair,flip};window.__F=F;
 document.querySelectorAll("[data-chart]").forEach(b=>{try{F[b.dataset.chart](b,JSON.parse(b.dataset.rows),b.dataset.unit)}catch(e){console.error(e)}});
 })();
 </script>
@@ -425,7 +671,17 @@ document.querySelectorAll("[data-chart]").forEach(b=>{try{F[b.dataset.chart](b,J
 .kpi.on{cursor:pointer}
 .kpi.on:hover,.kpi.on:focus-visible{border-color:var(--accent);outline:none}
 .drill-hint{font-size:12px;color:var(--accent);margin-top:6px}
-.tx-flt{font:inherit;font-size:12.5px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);border-radius:6px;padding:3px 9px;cursor:pointer}
+.daybrk{display:flex;flex-direction:column;gap:14px;min-width:0}
+.brk-auto{display:flex;flex-direction:column;gap:14px;min-width:0}
+.brk-auto .card h3,.improve h3{margin-bottom:6px}
+ul.tlist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;font-size:14px}
+ul.tlist a.tl{font-weight:600;text-decoration:none}
+.tw{font-size:12.5px;color:var(--muted)}
+.tw2{font-size:12.5px}
+.improve{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:14px 18px}
+.improve ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+@media (min-width:860px){.brk-lists{grid-template-columns:1fr 1fr}}
+.tx-flt{white-space:nowrap;font:inherit;font-size:12.5px;border:1px solid var(--accent);background:var(--soft);color:var(--accent);border-radius:6px;padding:3px 9px;cursor:pointer}
 @media (max-width:700px){.tx-det{grid-template-columns:1fr}}
 </style>
 <script>
@@ -453,7 +709,7 @@ function load(D){
     j.trades.forEach(t=>t.link=k+"-"+t.id);
     j.paper.forEach(p=>{p.kind="paper";p.link=p.bot?k+"-"+p.bot:null;p.id=p.bot||(p.time.replace(":","")+"-"+p.sym)});
     D.byLink=Object.fromEntries(j.trades.map(t=>[t.link,t]));
-    render(D);return D;
+    render(D);if(D.brk)renderBrk(D);return D;
   }).catch(e=>{D.box.querySelector(".tx-body").textContent="Couldn't load this day's trades (data/"+D.day+".json). "+e.message;D.p=null;throw e});
   return D.p;
 }
@@ -466,6 +722,7 @@ function rowsOf(D){
   const res=t=>S.kind==="paper"?t.pnl:(t.status==="closed"?t.r:null);
   if(S.res==="win")rows=rows.filter(t=>res(t)>0);
   if(S.res==="loss")rows=rows.filter(t=>res(t)<0);
+  if(S.ids)rows=rows.filter(t=>S.ids.has(t.id));
   if(S.time)rows=rows.filter(t=>t.time>=S.time[0]&&t.time<S.time[1]);
   if(S.reason)rows=rows.filter(t=>(t.reason||"").includes(S.reason));
   if(S.res==="nofill")rows=rows.filter(t=>S.kind==="paper"?!t.filled:t.status!=="closed");
@@ -492,12 +749,12 @@ function render(D){
   if(S.setup&&!setups.includes(S.setup))S.setup="";if(S.sym&&!syms.includes(S.sym))S.sym="";
   const body=D.box.querySelector(".tx-body");body.textContent="";
   const tabs=h("div",{class:"tx-tabs",role:"group","aria-label":"Trade list"});
-  KINDS.forEach(([k,lab])=>{if(!counts[k])return;tabs.append(h("button",{type:"button","aria-pressed":S.kind===k,onclick:()=>{S.kind=k;S.open=null;S.limit=60;S.time=null;S.reason="";S.drill="";S.sort=k==="shadow"?"usd":"time";S.dir=1;render(D)}},lab,h("span",{class:"c"},counts[k])))});
+  KINDS.forEach(([k,lab])=>{if(!counts[k])return;tabs.append(h("button",{type:"button","aria-pressed":S.kind===k,onclick:()=>{S.kind=k;S.open=null;S.limit=60;S.time=null;S.reason="";S.drill="";S.ids=null;S.sort=k==="shadow"?"usd":"time";S.dir=1;render(D)}},lab,h("span",{class:"c"},counts[k])))});
   const sel=(id,lab,opts,val,fn,name)=>{const s=h("select",{id,"aria-label":lab,onchange:e=>{fn(e.target.value);S.open=null;render(D)}},h("option",{value:""},"All "+lab.toLowerCase()));opts.forEach(o=>{const op=h("option",{value:o},name?name(o):o);if(o===val)op.selected=true;s.append(op)});return s};
   const chips=h("div",{class:"tx-chips",role:"group","aria-label":"Result"});
   [["","All"],["win","Wins"],["loss","Losses"],["nofill","Not filled"]].forEach(([v,lab])=>chips.append(h("button",{type:"button","aria-pressed":(S.res||"")===v,onclick:()=>{S.res=v;S.open=null;render(D)}},lab)));
   const bar=h("div",{class:"tx-bar"},sel("tx-setup-"+D.day,"Setups",setups,S.setup,v=>S.setup=v,sname),sel("tx-sym-"+D.day,"Symbols",syms,S.sym,v=>S.sym=v),chips);
-  if(S.drill)bar.append(h("button",{type:"button",class:"tx-flt",title:"Clear this filter",onclick:()=>{S.time=null;S.reason="";S.drill="";S.open=null;render(D)}},S.drill+" ✕"));
+  if(S.drill)bar.append(h("button",{type:"button",class:"tx-flt",title:"Clear this filter",onclick:()=>{S.time=null;S.reason="";S.drill="";S.ids=null;S.open=null;render(D)}},S.drill+" ✕"));
   const rows=rowsOf(D);
   const closed=S.kind==="paper"?rows.filter(t=>t.filled):rows.filter(t=>t.status==="closed");
   const tot$=closed.reduce((a,t)=>a+((S.kind==="paper"?t.pnl:t.usd)||0),0),totR=closed.reduce((a,t)=>a+(t.r||0),0),wins=closed.filter(t=>(S.kind==="paper"?t.pnl:t.r)>0).length;
@@ -613,16 +870,79 @@ function chart(D,t,pp){
   return wrap;
 }
 
+
+// ---- Day breakdown: numbers, best and worst trades, checks (filled from the day's data) ----
+const BUCKETS=[["9:31-9:45",0,585],["9:45-10:00",585,600],["10:00-11:00",600,660],["11:00-12:30",660,750],["12:30-13:30",750,810],["13:30-15:00",810,900],["15:00-close",900,9999]];
+const tmin=t=>+t.slice(0,2)*60+ +t.slice(3,5);
+function sumOf(rows){return{n:rows.length,usd:rows.reduce((a,t)=>a+(t.usd||0),0),r:rows.reduce((a,t)=>a+(t.r||0),0),w:rows.filter(t=>(t.r||0)>0).length}}
+function checksOf(tk){
+  const stop=t=>(t.exit||"").startsWith("stop");
+  const re=[],last={};
+  [...tk].sort((a,b)=>a.time<b.time?-1:1).forEach(t=>{const k=t.sym+t.side,m=tmin(t.time);if(k in last&&m-last[k]<=30)re.push(t);if(stop(t))last[k]=tmin(t.e_exit||t.time)});
+  const early=tk.filter(t=>t.e_held);
+  const heldR=early.reduce((a,t)=>a+t.e_held_r,0),heldUsd=early.reduce((a,t)=>a+(t.r?(t.usd||0)/t.r*t.e_held_r:0),0);
+  return [
+    ["Stopped within 2 minutes",tk.filter(t=>stop(t)&&t.e_mins!=null&&t.e_mins<=2),"The stop sat inside the normal noise of the entry bar."],
+    ["Stopped, then went 1.5R+ its way within 30 min",tk.filter(t=>stop(t)&&t.e_mfe30>=1.5&&(t.e_mfe||0)<1),"The read was right but the stop was too close or the entry too early."],
+    ["Was +0.7R or more, then stopped",tk.filter(t=>stop(t)&&t.e_mfe>=0.7),"Profit was there and handed back. A breakeven stop at +0.7R would have saved these, but could also cut some winners."],
+    ["Re-entered within 30 min of a stop (same stock, same side)",re,"Second tries after a stop."],
+    ["Stop under 0.15% of price",tk.filter(t=>t.stop_pct!=null&&t.stop_pct<0.15),"Tight stops; ruled out for Plan 1 since Nov 17."],
+    ["Closed early (delta exit, breakeven, flat)",early,early.length?`Holding to the original stop or target would have made ${rr(heldR)} (${usd(heldUsd)}) instead.`:""]
+  ].filter(c=>c[1].length);
+}
+function renderBrk(D){
+  const j=D.data,box=D.brk.querySelector(".brk-auto");if(!box)return;box.textContent="";
+  const parts=(D.brk.dataset.parts||"kpis,charts,best,worst,checks").split(",");
+  const tk=j.trades.filter(t=>t.kind==="taken"&&t.status==="closed"),A=sumOf(tk),T=Object.fromEntries(j.trades.map(t=>[t.id,t]));
+  const k=dkey(D.day);
+  if(parts.includes("kpis")){
+    const pf=j.paper.filter(p=>p.filled),pu=pf.reduce((a,p)=>a+(p.pnl||0),0);
+    const sh=j.trades.filter(t=>t.kind==="shadow"&&t.status==="closed"),S2=sumOf(sh);
+    const kp=(lab,v,n,c,kind)=>{const d=h("div",{class:"kpi"},h("div",{class:"k"},lab),h("div",{class:"v "+(c||"")},v),h("div",{class:"n"},n));if(kind)arm(d,()=>drill(D,{kind}),"Open these trades");return d};
+    const row=h("div",{class:"kpis"},kp("Bot",usd(A.usd),`${rr(A.r)} · ${A.n} trades · ${A.n?Math.round(100*A.w/A.n):0}% wins`,cls(A.usd),"taken"));
+    if(pf.length)row.append(kp("Webull paper",usd(pu),`${pf.length} fills`,cls(pu),"paper"));
+    if(sh.length)row.append(kp("Shadow (rules skipped)",usd(S2.usd),`${S2.n} trades · ${rr(S2.r)}`,cls(S2.usd),"shadow"));
+    const bs={};tk.forEach(t=>{(bs[t.sym]=bs[t.sym]||[]).push(t)});const sy=Object.entries(bs).map(([s,r])=>[s,sumOf(r).usd]).sort((a,b)=>b[1]-a[1]);
+    if(sy.length){row.append(kp("Best stock",sy[0][0],usd(sy[0][1]),cls(sy[0][1])));row.append(kp("Worst stock",sy[sy.length-1][0],usd(sy[sy.length-1][1]),cls(sy[sy.length-1][1])))}
+    box.append(row);
+  }
+  if(parts.includes("charts")&&window.__F){
+    const mk=(title,rows,cap)=>{const c=h("div",{class:"chart","data-drill":"taken","data-chart":"hbar","data-rows":JSON.stringify(rows)});window.__F.hbar(c,rows);armChart(c);return h("div",{class:"card"},h("h3",{},title),c,cap?h("p",{class:"cap"},cap):null)};
+    const tr=BUCKETS.map(([l,a,b])=>[l,tk.filter(t=>tmin(t.time)>=a&&tmin(t.time)<b)]).filter(x=>x[1].length).map(([l,r])=>{const q=sumOf(r);return[l,Math.round(q.usd),`${q.n} trades · ${rr(q.r)}`]});
+    const bs={};tk.forEach(t=>{(bs[t.setup]=bs[t.setup]||[]).push(t)});
+    const sr=Object.entries(bs).map(([s,r])=>{const q=sumOf(r);return[sname(s),Math.round(q.usd),`${q.n} trades · ${rr(q.r)} · ${Math.round(100*q.w/q.n)}% wins`]}).sort((a,b)=>b[1]-a[1]);
+    if(tr.length)box.append(h("div",{class:"two"},mk("By time of day",tr),mk("By setup",sr)));
+  }
+  const tradeLi=t=>{const lk=k+"-"+t.id;
+    return h("li",{},h("a",{href:"#"+lk,class:"tl"},`${t.time} ${t.sym} ${sname(t.setup)} ${t.side}`)," ",h("span",{class:"num "+cls(t.usd)},`${usd(t.usd)} (${rr(t.r)})`),
+      h("div",{class:"tw"},[t.note,t.levels?"at "+(t.levels.length>90?t.levels.slice(0,88)+"…":t.levels):null].filter(Boolean).join(" · ")),t.why?h("div",{class:"tw2"},t.why):null)};
+  const lists=h("div",{class:"two brk-lists"});
+  if(parts.includes("best")){const b=tk.filter(t=>(t.usd||0)>0).sort((a,b)=>b.usd-a.usd).slice(0,3);if(b.length)lists.append(h("div",{class:"card"},h("h3",{},"What worked"),h("ul",{class:"tlist"},...b.map(tradeLi))))}
+  if(parts.includes("worst")){const w=tk.filter(t=>(t.usd||0)<0).sort((a,b)=>a.usd-b.usd).slice(0,3);if(w.length)lists.append(h("div",{class:"card"},h("h3",{},"What failed"),h("ul",{class:"tlist"},...w.map(tradeLi))))}
+  if(lists.childNodes.length)box.append(lists);
+  if(parts.includes("checks")){
+    const cs=checksOf(tk),card=h("div",{class:"card"},h("h3",{},"Checks on every taken trade"));
+    if(!j.has_bars)card.append(h("p",{class:"cap"},"Bar-based checks need this day's orderflow.db; only the ones from the CSVs are shown."));
+    const tb=h("tbody");
+    cs.forEach(([lab,rows,note])=>{const q=sumOf(rows),ids=new Set(rows.map(t=>t.id));
+      const b=h("button",{type:"button",class:"tx-flt"},`Show ${q.n}`);b.addEventListener("click",()=>drill(D,{kind:"taken",ids,drill:lab}));
+      tb.append(h("tr",{},h("td",{},lab,note?h("div",{class:"tw"},note):null),h("td",{class:"r num"},q.n),h("td",{class:"r num "+cls(q.usd)},usd(q.usd)),h("td",{class:"r num "+cls(q.r)},rr(q.r)),h("td",{},b)))});
+    card.append(h("div",{class:"tbl"},h("table",{},h("thead",{},h("tr",{},h("th",{},"Check"),h("th",{class:"r"},"Trades"),h("th",{class:"r"},"$"),h("th",{class:"r"},"R"),h("th",{},""))),tb)));
+    box.append(card);
+  }
+}
 function openFromHash(){
   const id=decodeURIComponent(location.hash.slice(1));const m=/^([a-z]{3}\d{1,2})-\d{4}-/.exec(id);if(!m)return;
   const D=days[m[1]];if(!D)return;
   load(D).then(()=>{const t=D.byLink[id];if(!t)return;
-    Object.assign(D.state,{kind:t.kind,setup:"",sym:"",res:"",open:t.kind+":"+t.id,limit:Infinity});render(D);
+    Object.assign(D.state,{kind:t.kind,setup:"",sym:"",res:"",time:null,reason:"",drill:"",ids:null,open:t.kind+":"+t.id,limit:Infinity});render(D);
     const r=document.getElementById(id);if(r){r.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});r.focus({preventScroll:true})}}).catch(()=>{});
 }
 
 document.querySelectorAll(".trades[data-day]").forEach(box=>{
   const day=box.dataset.day,D={box,day,state:{kind:"taken",sort:"time",dir:1,limit:60,res:"",setup:"",sym:""}};days[dkey(day)]=D;
+  const brk=document.querySelector('.daybrk[data-day="'+day+'"]');
+  if(brk){D.brk=brk;if("IntersectionObserver" in window){const io2=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io2.disconnect();load(D).catch(()=>{})}},{rootMargin:"600px"});io2.observe(brk)}}
   box.append(h("div",{class:"hd"},h("h3",{},"Every trade"),h("p",{class:"cap"},"Click a row for the chart and details. The # link points straight at that trade.")),h("div",{class:"tx-body"}));
   if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();load(D).catch(()=>{})}},{rootMargin:"800px"});io.observe(box)}else load(D).catch(()=>{});
 });
@@ -640,7 +960,7 @@ function target(label,kind){
   return null;
 }
 function drill(D,f){
-  load(D).then(()=>{Object.assign(D.state,{kind:f.kind,setup:f.setup||"",sym:"",res:"",time:f.time||null,reason:f.reason||"",drill:f.drill||"",open:null,limit:60,sort:"time",dir:1});
+  load(D).then(()=>{Object.assign(D.state,{kind:f.kind,setup:f.setup||"",sym:"",res:"",time:f.time||null,reason:f.reason||"",drill:f.drill||"",ids:f.ids||null,open:null,limit:60,sort:"time",dir:1});
     const has=k=>k==="paper"?D.data.paper.length:D.data.trades.some(t=>t.kind===k);
     if(!has(D.state.kind)){D.state.kind="taken";D.state.reason="";D.state.drill=D.state.time?D.state.drill:""}
     render(D);D.box.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}).catch(()=>{});
@@ -649,7 +969,7 @@ const arm=(node,fn,tip)=>{node.classList.add("on");node.setAttribute("tabindex",
   const t=document.createElementNS(NS,"title");t.textContent=tip;if(node instanceof SVGElement)node.append(t);else node.title=tip;
   node.addEventListener("click",fn);node.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn()}})};
 const dayOfLabel=l=>{const m=/^(Oct|Nov|Dec)\s+(\d{1,2})/i.exec(l);return m?m[1].toLowerCase()+(+m[2]):null};
-document.querySelectorAll(".chart[data-drill]").forEach(c=>{
+function armChart(c){
   const kind=c.dataset.drill,rows=JSON.parse(c.dataset.rows),sec=c.closest("section"),own=sec&&sec.querySelector(".trades[data-day]");
   let any=false;
   c.querySelectorAll("rect.hit").forEach(hit=>{const r=rows[+hit.dataset.i];if(!r)return;const lab=String(r[0]);
@@ -660,7 +980,8 @@ document.querySelectorAll(".chart[data-drill]").forEach(c=>{
     if(!f){hit.remove();return}
     arm(hit,()=>drill(D,f),`Show these trades: ${lab}`);any=true});
   if(any){const card=c.closest(".card");const hint=h("p",{class:"drill-hint"},"Click a bar to open those trades.");(card||c.parentNode).insertBefore(hint,c.nextSibling)}
-});
+}
+document.querySelectorAll(".chart[data-drill]").forEach(armChart);
 document.querySelectorAll("section").forEach(sec=>{const own=sec.querySelector(".trades[data-day]");if(!own)return;const D=days[dkey(own.dataset.day)];
   sec.querySelectorAll(".kpi").forEach(k=>{const n=(k.querySelector(".k")||{}).textContent||"";
     const kind=/shadow|skipped/i.test(n)?"shadow":/missed/i.test(n)?"missed":/webull|paper/i.test(n)?"paper":/^bot$/i.test(n.trim())?"taken":null;
