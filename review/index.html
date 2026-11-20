@@ -61,12 +61,84 @@ td.r,th.r{text-align:right}
 .foot{margin-top:48px;color:var(--muted);font-size:13px}
 a{color:var(--accent)}
 @media (max-width:700px){.entry{grid-template-columns:1fr;gap:10px}.body{border-left:0;padding-left:0}.rail .d{position:static}.rail .d b{display:inline;margin-right:8px}.two{grid-template-columns:1fr}}
+
+/* Calendar layer: home = month grid of trading days + patterns; a day opens as its own view with tabs */
+:root{--tint-g:color-mix(in srgb,var(--gain) 14%,var(--panel));--tint-l:color-mix(in srgb,var(--loss) 14%,var(--panel));--tint-g2:color-mix(in srgb,var(--gain) 30%,var(--panel));--tint-l2:color-mix(in srgb,var(--loss) 30%,var(--panel))}
+body.v-day header,body.v-day #cal,body.v-day #patterns{display:none}
+body.v-home section.entry:not(#patterns){display:none}
+body.v-day section.entry{display:none}
+body.v-day section.entry.cur{display:block;margin-top:14px}
+body.v-day .entry .rail{display:none}
+body.v-day .entry .body{border-left:0;padding-left:0}
+#dayhead{display:none}
+body.v-day #dayhead{display:flex}
+#cal{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.mstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.mstrip .kpi .v{font-size:20px}
+.calbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.calbar h2{font-size:20px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{font:500 13px var(--body);color:var(--muted);background:none;border:0;padding:6px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--soft);color:var(--accent)}
+.seg button:focus-visible,.cell:focus-visible,.tabs button:focus-visible,.navb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,.8fr);gap:6px}
+.wd{align-self:end;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 4px}
+.cell{display:flex;flex-direction:column;gap:2px;min-height:104px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg);text-decoration:none;min-width:0;position:relative}
+a.cell{cursor:pointer;transition:transform .12s,box-shadow .12s}
+a.cell:hover{transform:translateY(-1px);box-shadow:0 3px 10px color-mix(in srgb,var(--fg) 12%,transparent)}
+.cell.up{background:var(--tint-g)} .cell.dn{background:var(--tint-l)}
+.cell.up.big{background:var(--tint-g2)} .cell.dn.big{background:var(--tint-l2)}
+.cell.empty{background:transparent;border-style:dashed;color:var(--muted)}
+.cell.today{border-color:var(--accent);border-style:solid}
+.cell .dn1{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.cell .val{font-family:var(--mono);font-size:19px;font-weight:500;line-height:1.2}
+.cell .meta{font-size:11.5px;color:var(--muted)}
+.cell svg{display:block;width:100%;height:22px;margin-top:auto}
+.cell .note{font-size:11.5px;margin-top:auto}
+.wk{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 10px;border-radius:8px;background:var(--soft);min-width:0}
+.wk .k{font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.wk .val{font-family:var(--mono);font-size:16px;font-weight:500}
+.legend{font-size:12.5px;color:var(--muted)}
+#dayhead{flex-direction:column;gap:12px;margin-top:4px}
+.dh-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.navb{font:500 13px var(--body);color:var(--accent);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;text-decoration:none}
+.navb[aria-disabled="true"]{color:var(--muted);opacity:.5;pointer-events:none}
+.dh-top .sp{flex:1}
+.dh-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.dh-title h1{font-size:28px}
+.dh-title .d2{color:var(--muted);font-size:14px}
+.glance{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;align-items:stretch}
+.gl{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+.gl .k{font-size:11.5px;color:var(--muted)} .gl .v{font-family:var(--mono);font-size:18px;font-weight:500}
+.gl.curve{grid-column:span 2}
+.gl.curve svg{display:block;width:100%;height:44px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding-top:6px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.tabs button{font:500 14px var(--body);color:var(--muted);background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.panel .chart svg{max-width:760px}
+.panel{display:flex;flex-direction:column;gap:18px}
+.panel[hidden]{display:none!important}
+@media (max-width:700px){
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+  .wk,.wd.wkh{display:none}
+  .mstrip .kpi:last-child:nth-child(odd){grid-column:1/-1}
+  .cell{min-height:64px;padding:6px 5px;border-radius:6px}
+  .cell .val{font-size:13px}
+  .cell .meta,.cell svg,.cell .note{display:none}
+  .cell .dn1 span+span{display:none}
+  .gl.curve{grid-column:1/-1}
+  .dh-title h1{font-size:23px}
+}
+@media (prefers-reduced-motion: reduce){a.cell{transition:none}a.cell:hover{transform:none}}
+
 </style>
 
 <div class="wrap">
 <header>
   <h1>Order Flow - Footprint bot Review</h1>
-  <p class="sub">Why the footprint bot loses, what the shadow trades show, and what changed. Every trading day since Nov 2 has a review with its best and worst trades, checks and ideas to test, and every trade links to its chart. Newest first. Dollars are the bot's own tracking unless marked as paper.</p>
+  <p class="sub">Every trading day since Nov 2 on one calendar. Click a day to open its review: what happened, the charts and checks, and every trade with its chart. Dollars are the bot&#39;s own tracking unless marked as paper.</p>
 </header>
 
 <!-- ===================== PATTERNS ACROSS ALL DAYS ===================== -->
@@ -913,6 +985,19 @@ function renderBrk(D){
     const sr=Object.entries(bs).map(([s,r])=>{const q=sumOf(r);return[sname(s),Math.round(q.usd),`${q.n} trades · ${rr(q.r)} · ${Math.round(100*q.w/q.n)}% wins`]}).sort((a,b)=>b[1]-a[1]);
     if(tr.length)box.append(h("div",{class:"two"},mk("By time of day",tr),mk("By setup",sr)));
   }
+  if(window.__F&&tk.length){
+    const EXN={"target":"Target","target 2":"Target 2","stop":"Stop","delta exit":"Delta exit","breakeven":"Breakeven","flat by 15":"Flat before close"};
+    const grp=(key,name)=>{const g={};tk.forEach(t=>{const n=name(t[key]);(g[n]=g[n]||[]).push(t)});return g};
+    const mk3=(title,g,order,cap)=>{let ent=Object.entries(g);ent=order?ent.sort((a,b)=>order(a[0])-order(b[0])):ent.sort((a,b)=>sumOf(b[1]).usd-sumOf(a[1]).usd);
+      const rows=ent.map(([l,r])=>{const q=sumOf(r);return[l,Math.round(q.usd),`${q.n} trades · ${rr(q.r)} · ${Math.round(100*q.w/q.n)}% wins`]});
+      const ids=Object.fromEntries(ent.map(([l,r])=>[l,new Set(r.map(t=>t.id))]));
+      const c=h("div",{class:"chart"});window.__F.hbar(c,rows);let any=false;
+      c.querySelectorAll("rect.hit").forEach(hit=>{const r=rows[+hit.dataset.i];if(!r)return;arm(hit,()=>drill(D,{kind:"taken",ids:ids[r[0]],drill:title+": "+r[0]}),"Show these trades: "+r[0]);any=true});
+      return h("div",{class:"card"},h("h3",{},title),c,any?h("p",{class:"drill-hint"},"Click a bar to open those trades."):null,cap?h("p",{class:"cap"},cap):null)};
+    const EXO=["Target 2","Target","Breakeven","Delta exit","Flat before close","Stop"];
+    box.append(h("div",{class:"two"},mk3("By stock",grp("sym",s=>s)),mk3("Long vs short",grp("side",s=>s==="long"?"Long":"Short"),l=>l==="Long"?0:1)),
+      mk3("How trades ended",grp("exit",e=>EXN[e]||e),l=>{const i=EXO.indexOf(l);return i<0?99:i},"Target 2 is the runner half reaching its second target. Delta exit closes early when delta turns against the trade."));
+  }
   const tradeLi=t=>{const lk=k+"-"+t.id;
     return h("li",{},h("a",{href:"#"+lk,class:"tl"},`${t.time} ${t.sym} ${sname(t.setup)} ${t.side}`)," ",h("span",{class:"num "+cls(t.usd)},`${usd(t.usd)} (${rr(t.r)})`),
       h("div",{class:"tw"},[t.note,t.levels?"at "+(t.levels.length>90?t.levels.slice(0,88)+"…":t.levels):null].filter(Boolean).join(" · ")),t.why?h("div",{class:"tw2"},t.why):null)};
@@ -988,6 +1073,181 @@ document.querySelectorAll("section").forEach(sec=>{const own=sec.querySelector("
     if(!kind||(kind!=="paper"&&kind!=="taken"&&!sec.querySelector(".kpi")))return;
     arm(k,()=>drill(D,{kind}),"Open these trades")})});
 window.addEventListener("hashchange",openFromHash);openFromHash();
+})();
+</script>
+<script type="application/json" id="cal-data">{"today":"2026-11-20","days":[{"day":"2026-11-02","key":"nov2","n":71,"usd":1056,"r":-12.7,"wins":27,"paper":null,"head":"Afternoon start: divergence carried it","curve":[["12:12",-4],["12:14",-2],["12:14",-8],["12:17",-11],["12:19",-81],["12:20",-107],["12:21",-70],["12:21",-74],["12:22",-78],["12:23",-56],["12:24",-58],["12:28",-63],["12:36",-64],["13:05",-56],["13:16",-64],["13:17",-65],["13:18",-64],["13:19",-24],["13:22",-28],["13:22",-33],["13:22",-37],["13:22",-43],["13:23",-62],["13:23",-77],["13:31",-81],["13:31",-84],["13:34",-73],["13:35",-77],["13:36",-82],["13:38",-82],["13:40",-55],["13:40",-92],["13:54",-98],["13:54",-105],["13:57",-111],["13:58",-111],["13:59",-119],["14:32",-142],["14:32",-118],["14:32",-135],["14:33",-118],["14:35",-122],["14:35",-126],["14:36",-168],["14:36",-173],["14:40",47],["14:40",47],["14:42",4],["14:44",0],["14:47",49],["14:47",67],["14:47",119],["14:48",138],["14:50",134],["14:51",128],["14:51",125],["14:52",121],["15:00",98],["15:03",290],["15:12",353],["15:25",346],["15:27",403],["15:27",460],["15:27",495],["15:28",450],["15:38",552],["15:46",564],["15:50",601],["15:55",858],["15:55",966],["15:55",1056]]},{"day":"2026-11-03","key":"nov3","n":40,"usd":-204,"r":-7.5,"wins":18,"paper":null,"head":"Halted at 11:11 after a run of losses","curve":[["09:32",-3],["09:35",-4],["09:36",112],["09:37",17],["09:42",88],["09:45",86],["09:50",-33],["09:53",-141],["09:54",-87],["09:56",-126],["09:56",-129],["09:56",-188],["10:00",-157],["10:01",-113],["10:12",-137],["10:24",-111],["10:28",-80],["10:32",42],["10:32",78],["10:35",1],["10:40",-35],["10:41",29],["10:43",-47],["10:45",6],["10:47",31],["10:48",-21],["10:48",-14],["10:50",13],["10:51",-32],["10:56",6],["10:56",52],["10:59",8],["11:01",45],["11:06",60],["11:10",-67],["11:10",-88],["11:12",-104],["11:13",-150],["11:17",-185],["11:18",-204]]},{"day":"2026-11-04","key":"nov4","n":141,"usd":433,"r":0.5,"wins":72,"paper":null,"head":"Break-even: shorts paid, longs and lunch lost","curve":[["10:04",72],["10:05",57],["10:08",23],["10:08",55],["10:09",5],["10:12",58],["10:14",129],["10:15",233],["10:17",259],["10:19",183],["10:23",308],["10:24",321],["10:25",301],["10:28",355],["10:31",326],["10:37",392],["10:43",265],["10:43",447],["10:45",598],["10:46",564],["10:46",530],["10:53",486],["10:56",529],["10:56",653],["10:59",700],["11:00",665],["11:00",611],["11:02",520],["11:03",612],["11:03",689],["11:05",659],["11:08",578],["11:13",517],["11:14",409],["11:20",331],["11:23",364],["11:24",441],["11:25",347],["11:28",382],["11:30",287],["11:30",164],["11:39",175],["11:40",116],["12:10",121],["12:10",108],["12:11",137],["12:12",57],["12:13",117],["12:14",135],["12:14",160],["12:16",125],["12:20",23],["12:20",0],["12:22",1],["12:23",-33],["12:23",-99],["12:30",-122],["12:33",-85],["12:34",-58],["12:35",-95],["12:36",-47],["12:37",-29],["12:40",-55],["12:41",-96],["12:43",-78],["12:45",-102],["12:46",6],["12:46",-22],["12:53",-95],["12:56",-159],["12:56",-160],["12:58",-162],["13:05",-148],["13:05",-185],["13:10",-55],["13:10",-22],["13:10",8],["13:12",-12],["13:21",-32],["13:24",-41],["13:25",-105],["13:26",-182],["13:27",-201],["13:33",-174],["13:34",-161],["13:35",-152],["13:37",-98],["13:39",-117],["13:45",-56],["13:50",-39],["13:50",-41],["13:55",25],["13:55",78],["14:02",104],["14:10",150],["14:14",185],["14:14",225],["14:15",216],["14:16",254],["14:17",236],["14:19",238],["14:19",225],["14:25",216],["14:33",270],["14:35",245],["14:37",212],["14:39",193],["14:39",180],["14:43",250],["14:46",372],["14:47",390],["14:48",414],["14:50",447],["14:52",465],["14:53",493],["14:55",469],["14:57",527],["14:59",564],["15:00",532],["15:03",550],["15:07",556],["15:08",540],["15:10",566],["15:10",592],["15:17",565],["15:19",538],["15:19",516],["15:21",544],["15:21",563],["15:24",630],["15:24",639],["15:26",615],["15:30",547],["15:30",509],["15:30",447],["15:39",479],["15:40",492],["15:42",469],["15:44",490],["15:44",473],["15:47",433]]},{"day":"2026-11-05","key":"nov5","n":193,"usd":2275,"r":21.5,"wins":107,"paper":null,"head":"Best day of the test: stacked shorts in the morning","curve":[["09:34",123],["09:36",245],["09:36",303],["09:37",363],["09:40",487],["09:41",398],["09:41",531],["09:43",629],["09:49",793],["09:49",959],["09:50",887],["09:51",944],["09:52",1015],["09:52",1138],["09:53",1053],["09:56",1155],["09:56",1279],["09:57",1245],["09:58",1171],["09:58",1135],["10:01",1167],["10:02",1261],["10:06",1207],["10:09",1288],["10:10",1344],["10:10",1418],["10:10",1486],["10:11",1451],["10:11",1471],["10:13",1510],["10:17",1567],["10:19",1600],["10:21",1719],["10:21",1818],["10:23",1940],["10:25",2014],["10:27",2099],["10:27",2222],["10:27",2336],["10:32",2350],["10:34",2225],["10:38",2291],["10:38",2340],["10:41",2445],["10:42",2514],["10:42",2633],["10:44",2658],["10:45",2748],["10:45",2815],["10:46",2927],["10:48",2888],["10:50",3011],["10:51",3133],["10:51",3255],["10:55",3130],["10:56",3005],["10:58",3130],["11:00",3116],["11:00",3184],["11:04",3238],["11:05",3271],["11:09",3177],["11:15",3073],["11:15",2951],["11:15",2897],["11:16",2776],["11:17",2651],["11:17",2572],["11:18",2447],["11:21",2410],["11:32",2470],["11:33",2532],["11:33",2440],["11:35",2368],["11:35",2246],["11:35",2330],["11:40",2206],["11:43",2298],["11:47",2215],["11:48",2270],["11:51",2213],["11:51",2170],["11:51",2096],["12:01",2011],["12:04",2133],["12:07",2112],["12:08",2030],["12:10",2024],["12:10",1997],["12:14",1890],["12:14",1795],["12:16",1807],["12:19",1768],["12:21",1756],["12:26",1950],["12:30",2024],["12:30",2045],["12:30",1966],["12:33",1935],["12:34",1859],["12:35",1872],["12:35",1842],["12:40",1857],["12:42",1977],["12:43",1938],["12:45",2023],["12:47",1967],["12:51",1981],["12:53",1940],["13:00",2031],["13:02",2115],["13:03",2162],["13:06",2102],["13:08",2180],["13:08",2156],["13:08",2118],["13:11",2110],["13:12",2082],["13:12",2042],["13:14",2043],["13:18",2166],["13:18",2210],["13:19",2183],["13:30",2183],["13:30",2223],["13:31",2288],["13:31",2312],["13:34",2389],["13:35",2414],["13:38",2371],["13:40",2287],["13:44",2264],["13:47",2218],["13:47",2235],["13:47",2204],["13:51",2274],["13:55",2218],["13:56",2184],["13:58",2120],["14:03",2143],["14:07",2102],["14:11",2159],["14:15",2069],["14:17",2092],["14:18",2131],["14:18",2010],["14:18",2061],["14:18",2101],["14:18",2139],["14:24",2213],["14:28",2270],["14:29",2353],["14:31",2320],["14:33",2306],["14:36",2269],["14:37",2170],["14:38",2137],["14:41",2100],["14:41",2020],["14:55",2058],["14:56",2112],["14:56",2151],["15:01",2209],["15:04",2332],["15:05",2376],["15:07",2358],["15:08",2454],["15:09",2451],["15:12",2520],["15:12",2491],["15:13",2504],["15:14",2563],["15:17",2585],["15:17",2611],["15:21",2598],["15:23",2478],["15:24",2394],["15:25",2403],["15:29",2438],["15:30",2480],["15:31",2530],["15:31",2506],["15:32",2398],["15:33",2340],["15:33",2225],["15:36",2247],["15:37",2306],["15:38",2358],["15:42",2273],["15:44",2268],["15:46",2202],["15:55",2282],["15:55",2275]]},{"day":"2026-11-06","key":"nov6","n":61,"usd":-113,"r":-2.3,"wins":27,"paper":null,"head":"Small loss; no Plan 1 trades after 11:37","curve":[["09:32",51],["09:32",-76],["09:37",44],["09:37",123],["09:40",253],["09:42",185],["09:48",308],["09:54",401],["09:56",364],["09:57",239],["10:00",237],["10:00",331],["10:00",341],["10:02",260],["10:03",229],["10:05",289],["10:07",245],["10:09",303],["10:11",206],["10:13",222],["10:17",345],["10:20",315],["10:21",373],["10:23",461],["10:27",389],["10:28",289],["10:30",336],["10:31",291],["10:40",225],["10:40",189],["10:41",86],["10:44",146],["10:47",113],["10:49",36],["10:50",148],["10:50",24],["10:58",33],["11:00",-36],["11:02",-29],["11:03",-131],["11:05",-115],["11:06",-34],["11:06",-56],["11:08",-96],["11:11",-137],["11:13",-187],["11:21",-310],["11:23",-220],["11:24",-172],["11:28",-121],["11:31",-226],["11:31",-136],["11:33",-172],["11:35",-256],["11:36",-361],["11:37",-463],["11:39",-448],["11:43",-477],["11:43",-521],["15:54",-603],["15:55",-113]]},{"day":"2026-11-09","key":"nov9","n":162,"usd":-149,"r":-12.8,"wins":73,"paper":null,"head":"Divergence lost 18.7R; absorption held up","curve":[["09:37",131],["09:37",66],["09:37",100],["09:39",-24],["09:42",-79],["09:42",-128],["09:45",-62],["09:48",6],["09:52",-34],["09:54",-102],["09:58",-96],["09:59",23],["10:01",-6],["10:03",117],["10:05",34],["10:06",78],["10:07",17],["10:10",139],["10:15",81],["10:17",172],["10:30",281],["10:30",357],["10:35",368],["10:36",346],["10:41",376],["10:43",260],["10:43",282],["10:46",247],["10:51",316],["10:59",392],["11:01",453],["11:05",473],["11:07",527],["11:07",490],["11:07",424],["11:07",504],["11:08",520],["11:11",538],["11:12",509],["11:18",539],["11:20",575],["11:21",549],["11:23",504],["11:25",382],["11:25",325],["11:29",385],["11:30",367],["11:31",352],["11:33",448],["11:33",377],["11:36",279],["11:38",273],["11:41",251],["11:41",248],["11:43",187],["11:48",309],["11:48",324],["11:50",318],["11:51",272],["12:01",240],["12:03",223],["12:04",252],["12:19",148],["12:24",124],["12:35",101],["12:39",124],["12:43",141],["12:46",166],["12:47",169],["12:48",156],["12:52",144],["12:55",162],["12:56",140],["12:56",160],["12:59",167],["13:07",194],["13:10",190],["13:10",187],["13:13",129],["13:17",151],["13:18",132],["13:19",145],["13:20",125],["13:22",91],["13:26",124],["13:26",136],["13:27",97],["13:32",90],["13:34",65],["13:37",50],["13:37",27],["13:38",2],["13:41",-20],["13:42",-17],["13:43",-19],["13:46",61],["13:46",83],["13:46",64],["13:54",39],["13:54",27],["13:58",-10],["13:58",-1],["14:00",-4],["14:01",-22],["14:02",-37],["14:09",-34],["14:09",-54],["14:10",-75],["14:13",-61],["14:14",-78],["14:14",-87],["14:17",-104],["14:19",-89],["14:22",-104],["14:23",-128],["14:27",-148],["14:29",-131],["14:30",-117],["14:32",-101],["14:32",-94],["14:32",-82],["14:35",-123],["14:36",-148],["14:36",-185],["14:38",-160],["14:38",-116],["14:38",-140],["14:38",-116],["14:39",-90],["14:42",-61],["14:46",-90],["14:46",-85],["14:51",-47],["14:51",-19],["14:52",-42],["14:54",-81],["14:55",-43],["14:55",-71],["14:57",-116],["15:05",-110],["15:06",-133],["15:11",-157],["15:11",-122],["15:11",-106],["15:12",-43],["15:16",-63],["15:20",-35],["15:27",12],["15:29",3],["15:32",-25],["15:32",-70],["15:35",-95],["15:37",-70],["15:37",-56],["15:39",-62],["15:43",-121],["15:43",-142],["15:43",-160],["15:44",-210],["15:45",-234],["15:46",-197],["15:55",-149]]},{"day":"2026-11-10","key":"nov10","n":155,"usd":178,"r":-6.5,"wins":75,"paper":null,"head":"Flat day: good 9:45-10:00, bad 10:00-11:00","curve":[["09:34",-80],["09:36",-207],["09:43",-222],["09:44",-98],["09:51",-37],["09:51",85],["09:53",24],["09:56",145],["09:56",268],["09:59",389],["10:01",447],["10:03",413],["10:03",435],["10:15",559],["10:18",574],["10:19",581],["10:23",461],["10:23",418],["10:28",344],["10:30",301],["10:30",349],["10:31",305],["10:32",328],["10:35",270],["10:36",290],["10:40",263],["10:41",180],["10:42",222],["10:45",283],["10:47",379],["10:48",333],["10:50",364],["10:51",391],["10:53",370],["10:54",289],["10:59",309],["11:00",265],["11:00",173],["11:02",218],["11:07",192],["11:09",192],["11:11",255],["11:34",329],["11:38",346],["11:39",468],["11:39",503],["11:42",483],["11:47",598],["11:48",656],["11:52",600],["11:53",476],["11:56",574],["12:01",482],["12:01",458],["12:02",499],["12:03",541],["12:10",492],["12:17",432],["12:17",453],["12:22",388],["12:23",492],["12:25",548],["12:25",564],["12:30",509],["12:30",459],["12:36",509],["12:36",565],["12:37",582],["12:38",456],["12:41",520],["12:41",556],["12:43",570],["12:44",567],["12:45",582],["12:47",598],["12:47",557],["12:52",485],["12:54",451],["12:55",487],["12:55",470],["12:56",458],["12:57",443],["13:01",482],["13:02",551],["13:06",492],["13:07",434],["13:08",424],["13:08",442],["13:09",416],["13:09",402],["13:10",343],["13:13",339],["13:18",353],["13:19",336],["13:21",377],["13:21",422],["13:27",378],["13:29",349],["13:29",329],["13:34",347],["13:35",369],["13:35",364],["13:41",448],["13:41",410],["13:44",366],["13:51",400],["13:53",290],["13:56",268],["13:56",217],["13:57",174],["14:01",150],["14:02",108],["14:03",104],["14:05",116],["14:06",78],["14:07",63],["14:11",8],["14:11",-19],["14:12",3],["14:15",-3],["14:17",-36],["14:17",-17],["14:23",51],["14:26",31],["14:27",34],["14:34",-8],["14:36",28],["14:40",83],["14:40",63],["14:44",40],["14:47",90],["14:47",71],["14:49",10],["14:55",-4],["14:56",30],["14:59",50],["15:02",107],["15:02",137],["15:05",121],["15:06",85],["15:13",132],["15:14",137],["15:15",153],["15:15",115],["15:16",120],["15:22",138],["15:22",169],["15:27",88],["15:31",158],["15:36",125],["15:40",101],["15:41",87],["15:46",65],["15:52",143],["15:55",178]]},{"day":"2026-11-11","key":"nov11","n":143,"usd":611,"r":-7.9,"wins":69,"paper":null,"head":"Dollars up, R down: longs worked, shorts didn't","curve":[["09:32",-70],["09:32",-76],["09:36",0],["09:38",-83],["09:39",-116],["09:40",63],["09:46",122],["09:48",181],["09:50",62],["09:51",-43],["09:58",75],["10:04",180],["10:06",221],["10:10",297],["10:12",362],["10:15",301],["10:24",460],["10:26",517],["10:28",426],["10:28",461],["10:34",505],["10:36",458],["10:36",457],["10:38",581],["10:41",562],["10:43",660],["10:46",636],["10:50",538],["10:55",569],["10:56",530],["10:57",472],["11:02",439],["11:03",472],["11:08",433],["11:09",394],["11:20",481],["11:20",512],["11:21",607],["11:24",585],["11:27",560],["11:28",681],["11:28",720],["11:30",705],["11:36",725],["11:37",784],["11:47",826],["11:51",835],["12:00",861],["12:01",840],["12:03",875],["12:06",904],["12:11",913],["12:12",881],["12:14",912],["12:16",926],["12:16",964],["12:20",954],["12:23",976],["12:23",984],["12:25",973],["12:28",974],["12:30",971],["12:32",957],["12:34",979],["12:37",1034],["12:40",961],["12:40",983],["12:42",967],["12:45",948],["12:46",942],["12:48",939],["12:54",992],["12:55",1048],["12:56",1050],["12:58",1040],["12:58",1032],["12:59",1039],["13:00",1017],["13:00",986],["13:03",987],["13:05",1024],["13:09",1042],["13:12",1086],["13:15",1058],["13:20",1011],["13:21",998],["13:22",1055],["13:22",1041],["13:29",995],["13:33",1005],["13:36",976],["13:37",990],["13:39",984],["13:41",1013],["13:42",1052],["13:42",1078],["13:45",1078],["13:47",1018],["13:47",1030],["13:48",1031],["13:49",1008],["13:50",990],["13:50",987],["13:51",1006],["13:56",1007],["13:59",992],["14:01",974],["14:03",938],["14:07",966],["14:08",988],["14:11",987],["14:15",1018],["14:16",992],["14:21",962],["14:21",920],["14:23",946],["14:25",922],["14:25",934],["14:46",861],["14:48",848],["14:51",824],["14:56",812],["14:57",774],["15:01",755],["15:05",745],["15:06",789],["15:08",780],["15:08",774],["15:16",814],["15:18",794],["15:20",734],["15:23",742],["15:23",728],["15:24",691],["15:24",701],["15:26",767],["15:33",750],["15:37",709],["15:40",718],["15:40",685],["15:46",661],["15:50",597],["15:55",611]]},{"day":"2026-11-12","key":"nov12","n":14,"usd":-678,"r":-8.8,"wins":4,"paper":-546,"head":"Halted at 9:45 after long entries into the open failed","curve":[["09:33",-100],["09:36",21],["09:38",-103],["09:39",-156],["09:41",-158],["09:43",-97],["09:44",-222],["09:46",-347],["09:47",-384],["09:49",-508],["10:02",-465],["10:41",-588],["13:50",-682],["15:55",-678]]},{"day":"2026-11-13","key":"nov13","n":140,"usd":-837,"r":-19.0,"wins":59,"paper":-923,"head":"Lost all day: stacked and absorption both failed, divergence was the only winner","curve":[["09:49",-125],["09:59",3],["10:02",126],["10:03",43],["10:04",122],["10:05",-3],["10:05",-63],["10:10",60],["10:10",181],["10:10",306],["10:11",386],["10:12",316],["10:14",348],["10:14",247],["10:15",312],["10:15",231],["10:19",281],["10:21",212],["10:21",291],["10:24",166],["10:29",45],["10:31",18],["10:37",53],["10:38",116],["10:40",56],["10:44",40],["10:45",-35],["10:47",-45],["10:53",-70],["10:54",-59],["11:03",30],["11:07",-58],["11:07",-155],["11:10",-185],["11:12",-194],["11:14",-95],["11:14",-22],["11:21",-86],["11:24",-207],["11:26",-257],["11:29",-305],["11:30",-305],["11:30",-356],["11:30",-315],["11:31",-271],["11:35",-236],["11:36",-304],["11:37",-247],["11:38",-285],["11:39",-244],["11:43",-218],["11:43",-271],["11:44",-250],["11:45",-259],["11:46",-283],["11:52",-319],["11:53",-341],["11:56",-415],["11:58",-459],["11:59",-476],["12:00",-519],["12:05",-621],["12:11",-610],["12:12",-659],["12:12",-643],["12:15",-622],["12:17",-625],["12:23",-660],["12:26",-745],["12:29",-772],["12:30",-754],["12:30",-725],["12:35",-758],["12:37",-798],["12:39",-712],["12:41",-739],["12:43",-731],["12:47",-807],["12:51",-828],["13:02",-807],["13:02",-831],["13:07",-829],["13:12",-805],["13:16",-780],["13:16",-752],["13:21",-762],["13:21",-786],["13:21",-831],["13:22",-818],["13:24",-838],["13:25",-793],["13:27",-799],["13:32",-827],["13:36",-808],["13:43",-820],["13:44",-851],["13:49",-833],["13:49",-846],["13:51",-871],["14:00",-893],["14:02",-892],["14:03",-865],["14:06",-876],["14:07",-833],["14:07",-896],["14:14",-903],["14:14",-907],["14:14",-894],["14:20",-873],["14:20",-888],["14:20",-892],["14:27",-877],["14:30",-912],["14:34",-893],["14:34",-921],["14:36",-928],["14:36",-932],["14:38",-920],["14:44",-906],["14:44",-939],["14:45",-893],["14:48",-909],["14:49",-917],["14:51",-907],["14:53",-914],["14:57",-897],["14:58",-873],["15:01",-892],["15:07",-877],["15:07",-909],["15:13",-859],["15:18",-879],["15:18",-898],["15:22",-917],["15:28",-892],["15:31",-909],["15:32",-877],["15:37",-897],["15:43",-867],["15:46",-837]]},{"day":"2026-11-16","key":"nov16","n":170,"usd":84,"r":17.7,"wins":95,"paper":-1178,"head":"Why the bot keeps losing","curve":[["09:32",-126],["09:33",-253],["09:36",-379],["09:37",-439],["09:41",-547],["09:41",-645],["09:51",-602],["09:55",-724],["09:56",-847],["09:58",-886],["09:58",-868],["10:00",-823],["10:01",-825],["10:02",-864],["10:03",-740],["10:06",-715],["10:07",-592],["10:07",-550],["10:14",-615],["10:24",-518],["10:32",-591],["10:33",-605],["10:34",-663],["10:34",-700],["10:36",-655],["10:37",-572],["10:42",-680],["10:43",-723],["10:44",-732],["10:47",-851],["10:50",-910],["10:51",-886],["10:51",-944],["10:52",-901],["10:58",-865],["11:00",-932],["11:00",-853],["11:02",-787],["11:06",-795],["11:07",-806],["11:10",-798],["11:11",-720],["11:14",-705],["11:15",-679],["11:21",-706],["11:26",-649],["11:29",-707],["11:30",-725],["11:32",-741],["11:36",-790],["11:36",-866],["11:40",-845],["11:40",-859],["11:41",-876],["11:44",-916],["11:46",-919],["11:48",-965],["11:53",-979],["11:54",-929],["11:55",-897],["11:55",-868],["11:55",-867],["11:56",-914],["11:56",-839],["11:58",-847],["11:59",-859],["11:59",-852],["12:00",-819],["12:02",-781],["12:04",-746],["12:04",-710],["12:05",-708],["12:05",-700],["12:08",-654],["12:08",-629],["12:11",-610],["12:15",-587],["12:15",-557],["12:16",-590],["12:20",-565],["12:21",-566],["12:23",-538],["12:25",-497],["12:25",-477],["12:28",-478],["12:30",-449],["12:33",-492],["12:36",-512],["12:38",-490],["12:38",-436],["12:39",-467],["12:41",-429],["12:49",-464],["12:50",-457],["12:51",-451],["12:53",-466],["12:57",-399],["12:57",-359],["13:01",-416],["13:04",-376],["13:09",-374],["13:10",-385],["13:11",-377],["13:17",-300],["13:26",-268],["13:28",-228],["13:31",-199],["13:35",-165],["13:35",-125],["13:37",-147],["13:42",-200],["13:46",-176],["13:47",-201],["13:47",-233],["13:52",-217],["13:55",-158],["13:55",-150],["13:58",-147],["14:00",-134],["14:00",-104],["14:00",-44],["14:01",-27],["14:04",-44],["14:05",-55],["14:08",-122],["14:09",-176],["14:13",-188],["14:15",-181],["14:16",-159],["14:21",-131],["14:21",-144],["14:23",-101],["14:27",-70],["14:31",-57],["14:32",5],["14:32",45],["14:32",63],["14:32",79],["14:32",94],["14:35",87],["14:36",48],["14:39",69],["14:41",99],["14:41",158],["14:45",164],["14:50",101],["14:50",67],["14:55",50],["14:56",16],["14:57",42],["15:00",81],["15:10",35],["15:13",48],["15:15",125],["15:15",172],["15:18",145],["15:20",143],["15:23",176],["15:24",191],["15:27",165],["15:37",220],["15:37",242],["15:39",231],["15:43",142],["15:43",113],["15:43",160],["15:43",181],["15:46",146],["15:48",82],["15:55",84]]},{"day":"2026-11-17","key":"nov17","n":67,"usd":-122,"r":-6.9,"wins":30,"paper":277,"head":"First day of the new rules: stacked carried it, absorption gave it back","curve":[["09:34",105],["09:39",158],["09:40",132],["09:51",234],["09:58",140],["10:07",280],["10:10",403],["10:16",527],["10:18",453],["10:19",403],["10:22",316],["10:25",193],["10:30",93],["10:30",194],["10:34",80],["10:41",204],["10:42",281],["10:44",245],["10:46",255],["10:47",324],["10:47",398],["10:48",342],["10:51",381],["10:51",308],["10:54",375],["10:54",496],["11:16",467],["12:05",413],["12:29",384],["12:39",295],["12:46",319],["12:47",386],["12:48",446],["12:52",391],["13:26",492],["13:28",446],["13:36",495],["13:44",478],["13:46",480],["13:47",501],["13:52",451],["13:54",400],["14:00",389],["14:00",429],["14:07",368],["14:11",408],["14:18",361],["14:19",353],["14:25",352],["14:28",342],["14:30",379],["14:46",314],["14:54",350],["14:55",307],["14:55",308],["15:06",240],["15:08",123],["15:10",82],["15:17",57],["15:28",-1],["15:37",60],["15:38",14],["15:41",-33],["15:44",-31],["15:55",2],["15:55",-37],["15:55",-122]]},{"day":"2026-11-18","key":"nov18","n":45,"usd":285,"r":0.7,"wins":20,"paper":119,"head":"A small win, and the new rules are working","curve":[["09:39",-125],["09:40",-199],["09:41",-27],["09:47",30],["09:52",-97],["09:56",-48],["10:00",-173],["10:03",-220],["10:06",-223],["10:10",-278],["10:16",-370],["10:16",-234],["10:20",-112],["10:28",-9],["10:31",35],["10:31",48],["10:32",113],["10:37",218],["10:40",133],["10:41",237],["10:42",306],["10:42",294],["10:44",200],["10:45",164],["10:48",447],["10:48",431],["10:51",376],["10:57",322],["10:59",232],["11:13",356],["11:32",318],["12:33",305],["12:39",288],["12:44",352],["12:50",421],["12:54",478],["12:58",462],["13:01",393],["13:02",479],["13:08",434],["13:12",384],["13:22",277],["13:24",329],["13:31",370],["15:55",285]]},{"day":"2026-11-19","key":"nov19","n":48,"usd":2467,"r":21.2,"wins":31,"paper":1190,"head":"Best day since Nov 5, and it held into the afternoon","curve":[["09:32",106],["09:32",227],["09:35",199],["09:37",374],["09:38",249],["09:45",371],["09:50",275],["09:54",426],["10:00",299],["10:05",424],["10:13",542],["10:15",587],["10:16",547],["10:21",667],["10:25",788],["10:25",850],["10:27",756],["10:31",877],["10:34",1076],["10:36",1200],["10:39",1324],["10:47",1250],["10:51",1375],["10:54",1349],["10:57",1254],["10:59",1224],["11:00",1215],["11:03",1266],["11:50",1488],["12:30",1484],["12:37",1484],["12:40",1604],["12:44",1799],["12:50",1896],["12:58",1965],["13:06",2061],["13:07",2186],["13:08",2238],["13:14",2289],["13:17",2382],["13:21",2340],["13:22",2305],["13:28",2289],["13:31",2296],["13:46",2342],["13:50",2463],["14:51",2396],["15:55",2467]]}]}</script>
+<script>
+(function(){
+const S=JSON.parse(document.getElementById("cal-data").textContent);
+const DAYS=S.days, byKey={};DAYS.forEach((d,i)=>{d.i=i;byKey[d.key]=d});
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function h(t,a,...k){const e=document.createElement(t);for(const x in a||{}){if(x==="class")e.className=a[x];else if(x==="html")e.innerHTML=a[x];else e.setAttribute(x,a[x])}k.flat().forEach(c=>c!=null&&e.append(c));return e}
+const sgn=v=>v>0?"+":v<0?"−":"";
+const usd=v=>v==null?"—":sgn(v)+"$"+Math.abs(Math.round(v)).toLocaleString("en-US");
+const usdk=v=>v==null?"—":Math.abs(v)>=1000?sgn(v)+(Math.abs(v)/1000).toFixed(1)+"k":sgn(v)+Math.abs(Math.round(v));
+const rr=v=>v==null?"—":sgn(v)+Math.abs(v).toFixed(1)+"R";
+const cls=v=>v>0?"g":v<0?"l":"";
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],WD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const dt=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d))};
+const keyOf=s=>{const x=dt(s);return MON[x.getUTCMonth()].toLowerCase()+x.getUTCDate()};
+const NS="http://www.w3.org/2000/svg";
+function spark(curve,H){
+  const s=document.createElementNS(NS,"svg");s.setAttribute("viewBox",`0 0 200 ${H}`);s.setAttribute("preserveAspectRatio","none");s.setAttribute("aria-hidden","true");
+  if(!curve||!curve.length)return s;
+  const tm=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};const x0=570,x1=960;
+  const pts=[[x0,0],...curve.map(c=>[Math.min(x1,Math.max(x0,tm(c[0]))),c[1]])];
+  const lo=Math.min(0,...pts.map(p=>p[1])),hi=Math.max(0,...pts.map(p=>p[1])),sp=(hi-lo)||1;
+  const X=t=>(t-x0)/(x1-x0)*200,Y=v=>2+(H-4)*(1-(v-lo)/sp);
+  const z=document.createElementNS(NS,"line");Object.entries({x1:0,x2:200,y1:Y(0),y2:Y(0),stroke:"var(--line)","stroke-width":1,"vector-effect":"non-scaling-stroke"}).forEach(([k,v])=>z.setAttribute(k,v));s.append(z);
+  let d="";pts.forEach((p,i)=>{d+=(i?"L":"M")+X(p[0]).toFixed(1)+","+Y(p[1]).toFixed(1)});
+  const fin=pts[pts.length-1][1];
+  const a=document.createElementNS(NS,"path");a.setAttribute("d",d+`L${X(pts[pts.length-1][0]).toFixed(1)},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z`);a.setAttribute("fill",fin>=0?"var(--gain)":"var(--loss)");a.setAttribute("fill-opacity",".15");s.append(a);
+  const p=document.createElementNS(NS,"path");p.setAttribute("d",d);p.setAttribute("fill","none");p.setAttribute("stroke",fin>=0?"var(--gain)":"var(--loss)");p.setAttribute("stroke-width","1.6");p.setAttribute("vector-effect","non-scaling-stroke");s.append(p);
+  return s;
+}
+
+/* ---- group sections by day ---- */
+const secOf={};
+$$("section.entry").forEach(sec=>{
+  if(sec.id==="patterns")return;
+  const tr=$(".trades[data-day]",sec);
+  if(tr){secOf[keyOf(tr.dataset.day)]=sec;sec.dataset.key=keyOf(tr.dataset.day)}
+});
+// extra sections (no trades) belong to the day named in their rail date
+$$("section.entry").forEach(sec=>{
+  if(sec.id==="patterns"||sec.dataset.key)return;
+  const b=$(".rail b",sec),m=b&&/^(\w{3})\s+(\d{1,2})/.exec(b.textContent);if(!m)return;
+  const k=m[1].toLowerCase()+(+m[2]);const host=secOf[k];if(!host)return;
+  (host._extra=host._extra||[]).push(sec);
+});
+
+/* ---- build tabs inside each day ---- */
+const TABS=[["overview","Overview"],["breakdown","Charts & checks"],["trades","Every trade"],["extra","Evening notes"]];
+for(const k in secOf){
+  const sec=secOf[k],body=$(".body",sec),P={};
+  TABS.forEach(([id])=>P[id]=h("div",{class:"panel","data-tab":id,role:"tabpanel"}));
+  const kids=[...body.children];
+  kids.forEach(c=>{
+    if(c.classList.contains("trades"))P.trades.append(c);
+    else if(c.classList.contains("daybrk")){const imp=$(".improve",c);P.breakdown.append(c);if(imp)P.overview.append(imp)}
+    else if(c.classList.contains("two")||c.classList.contains("card"))P.breakdown.append(c);
+    else P.overview.append(c);
+  });
+  // keep "How to improve" last in Overview
+  const imp=$(".improve",P.overview);if(imp)P.overview.append(imp);
+  (sec._extra||[]).forEach(x=>{const b=$(".body",x);const wrap=h("div",{class:"panel",style:"gap:18px"});[...b.children].forEach(c=>wrap.append(c));P.extra.append(wrap);x.remove()});
+  const bar=h("div",{class:"tabs",role:"tablist"});
+  TABS.forEach(([id,label])=>{if(!P[id].children.length)return;
+    const b=h("button",{type:"button",role:"tab","data-tab":id,"aria-selected":"false"},label);b.addEventListener("click",()=>{setTab(sec,id);route(k,id,true)});bar.append(b)});
+  body.append(bar);TABS.forEach(([id])=>{if(P[id].children.length){P[id].hidden=true;body.append(P[id])}});
+  sec._tabs=P;
+}
+function setTab(sec,id){if(!sec._tabs[id]||!sec._tabs[id].children.length)id="overview";
+  $$(".tabs button",sec).forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===id)));
+  for(const t in sec._tabs)sec._tabs[t].hidden=t!==id;sec._cur=id}
+
+/* ---- calendar ---- */
+const cal=h("div",{id:"cal"});
+const tot=DAYS.reduce((a,d)=>(a.usd+=d.usd,a.r+=d.r,a.n+=d.n,a.up+=d.usd>0,a.dn+=d.usd<0,a.p+=d.paper||0,a),{usd:0,r:0,n:0,up:0,dn:0,p:0});
+const best=DAYS.reduce((a,d)=>d.usd>a.usd?d:a),worst=DAYS.reduce((a,d)=>d.usd<a.usd?d:a);
+const kpi=(k,v,n,c)=>h("div",{class:"kpi"},h("div",{class:"k"},k),h("div",{class:"v "+(c||"")},v),h("div",{class:"n"},n));
+const lab=d=>{const x=dt(d.day);return MON[x.getUTCMonth()]+" "+x.getUTCDate()};
+cal.append(h("div",{class:"mstrip"},
+  kpi("Bot, all days",usd(tot.usd),rr(tot.r)+" · "+tot.n.toLocaleString("en-US")+" trades",cls(tot.usd)),
+  kpi("Days up / down",tot.up+" / "+tot.dn,DAYS.length+" sessions"),
+  kpi("Best day",usd(best.usd),lab(best)+" · "+rr(best.r),"g"),
+  kpi("Worst day",usd(worst.usd),lab(worst)+" · "+rr(worst.r),"l"),
+  kpi("Webull paper",usd(tot.p),"since Nov 12",cls(tot.p))));
+let metric="usd";try{metric=localStorage.getItem("cal-metric")||"usd"}catch(e){}
+const seg=h("div",{class:"seg",role:"group","aria-label":"Show in each day"});
+[["usd","Bot $"],["r","Bot R"],["paper","Paper $"]].forEach(([m,l])=>{const b=h("button",{type:"button","data-m":m,"aria-pressed":String(m===metric)},l);
+  b.addEventListener("click",()=>{metric=m;try{localStorage.setItem("cal-metric",m)}catch(e){};$$("button",seg).forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.m===m)));drawGrid()});seg.append(b)});
+const months=[...new Set(DAYS.map(d=>d.day.slice(0,7)))];
+const gridBox=h("div",{});
+cal.append(gridBox);
+cal.append(h("p",{class:"legend"},"Weekdays only. Green days made money, red days lost it; the deeper the color, the bigger the day. The small line in each day is the bot's running P/L from the open to the close. Click a day to open it."));
+function val(d){return metric==="r"?d.r:metric==="paper"?d.paper:d.usd}
+function fmtv(d,short){const v=val(d);if(v==null)return "—";return metric==="r"?rr(v):short?usdk(v):usd(v)}
+function drawGrid(){
+  gridBox.textContent="";
+  const today=S.today;
+  months.slice().reverse().forEach(ym=>{
+    const [y,m]=ym.split("-").map(Number);
+    const head=h("div",{class:"calbar"},h("h2",{},new Date(Date.UTC(y,m-1,1)).toLocaleString("en-US",{month:"long",year:"numeric",timeZone:"UTC"})),seg);
+    const g=h("div",{class:"grid"});
+    ["Mon","Tue","Wed","Thu","Fri"].forEach(w=>g.append(h("div",{class:"wd"},w)));g.append(h("div",{class:"wd wkh"},"Week"));
+    const first=new Date(Date.UTC(y,m-1,1)),last=new Date(Date.UTC(y,m,0));
+    let cur=new Date(first);cur.setUTCDate(cur.getUTCDate()-((cur.getUTCDay()+6)%7)); // monday on/before 1st
+    const vals=DAYS.map(d=>Math.abs(val(d)||0)),big=vals.sort((a,b)=>a-b)[Math.floor(vals.length*.7)]||1;
+    const stop=new Date(Math.max(dt(DAYS[DAYS.length-1].day),dt(S.today)));
+    while(cur<=last&&cur<=stop){
+      let wk=[];
+      {const fri=new Date(cur);fri.setUTCDate(fri.getUTCDate()+4);if(fri<first){cur.setUTCDate(cur.getUTCDate()+7);continue}}
+      for(let i=0;i<5;i++){
+        const iso=cur.toISOString().slice(0,10),inM=cur.getUTCMonth()===m-1,d=DAYS.find(x=>x.day===iso);
+        if(d){const v=val(d);const c=h("a",{class:"cell "+(v>0?"up":v<0?"dn":"")+(Math.abs(v||0)>=big?" big":""),href:"#"+d.key,title:d.head},
+            h("div",{class:"dn1"},h("span",{},String(cur.getUTCDate())),h("span",{},d.n+" trades")),
+            h("div",{class:"val "+cls(v)},fmtv(d,innerWidth<700)),
+            h("div",{class:"meta"},metric==="r"?usd(d.usd):rr(d.r),d.paper!=null&&metric!=="paper"?" · paper "+usd(d.paper):metric==="paper"?" · bot "+usd(d.usd):""),
+            spark(d.curve,22));
+          g.append(c);wk.push(d)}
+        else if(inM){const isT=iso===today,fut=iso>today;
+          g.append(h("div",{class:"cell empty"+(isT?" today":"")},h("div",{class:"dn1"},h("span",{},String(cur.getUTCDate()))),
+            h("div",{class:"note"},isT?"Today. Review after the close.":fut?"":"No data")))}
+        else g.append(h("div",{"aria-hidden":"true"}));
+        cur.setUTCDate(cur.getUTCDate()+1);
+      }
+      cur.setUTCDate(cur.getUTCDate()+2);
+      if(wk.length){const s=wk.reduce((a,d)=>a+(val(d)||0),0);g.append(h("div",{class:"wk"},h("div",{class:"k"},"Week"),h("div",{class:"val "+cls(s)},metric==="r"?rr(s):usd(s)),h("div",{class:"meta",style:"font-size:11.5px;color:var(--muted)"},wk.length+" days")))}
+      else g.append(h("div",{class:"wk",style:"background:transparent"}));
+    }
+    gridBox.append(head,g);
+  });
+}
+drawGrid();addEventListener("resize",()=>{clearTimeout(drawGrid._t);drawGrid._t=setTimeout(drawGrid,150)});
+$("header").after(cal);
+
+/* ---- day header ---- */
+const dh=h("div",{id:"dayhead"});cal.after(dh);
+function drawHead(d){
+  dh.textContent="";const x=dt(d.day),prev=DAYS[d.i-1],next=DAYS[d.i+1];
+  const nb=(dd,txt,lbl)=>h("a",dd?{class:"navb",href:"#"+dd.key,"aria-label":lbl+" "+lab(dd)}:{class:"navb","aria-disabled":"true"},txt);
+  dh.append(h("div",{class:"dh-top"},h("a",{class:"navb",href:"#calendar"},"← Calendar"),h("span",{class:"sp"}),nb(prev,"‹ "+(prev?lab(prev):""),"Previous day"),nb(next,(next?lab(next):"")+" ›","Next day")),
+    h("div",{class:"dh-title"},h("h1",{},WD[x.getUTCDay()]+", "+lab(d)),h("span",{class:"d2"},"Footprint bot review")),
+    h("div",{class:"glance"},
+      h("div",{class:"gl"},h("div",{class:"k"},"Bot"),h("div",{class:"v "+cls(d.usd)},usd(d.usd))),
+      h("div",{class:"gl"},h("div",{class:"k"},"R"),h("div",{class:"v "+cls(d.r)},rr(d.r))),
+      h("div",{class:"gl"},h("div",{class:"k"},"Trades · wins"),h("div",{class:"v"},d.n+" · "+Math.round(100*d.wins/Math.max(1,d.n))+"%")),
+      h("div",{class:"gl"},h("div",{class:"k"},"Webull paper"),h("div",{class:"v "+cls(d.paper)},d.paper==null?"not running":usd(d.paper))),
+      h("div",{class:"gl curve"},h("div",{class:"k"},"Running P/L, 9:30 to 16:00"),spark(d.curve,44))));
+}
+
+/* ---- routing ---- */
+function route(k,tab,push){const want=k?(k+(tab&&tab!=="overview"?"-"+tab:"")):"calendar";if(push&&location.hash.slice(1)!==want)history.replaceState(null,"","#"+want)}
+function show(){
+  const id=decodeURIComponent(location.hash.slice(1));
+  let m=/^([a-z]{3}\d{1,2})(?:-(overview|breakdown|trades|extra))?$/.exec(id),k=null,tab="overview";
+  if(m&&secOf[m[1]]){k=m[1];tab=m[2]||"overview"}
+  else{const t=/^([a-z]{3}\d{1,2})-\d{4}-/.exec(id);if(t&&secOf[t[1]]){k=t[1];tab="trades"}}
+  if(!k){document.body.classList.add("v-home");document.body.classList.remove("v-day");$$("section.cur").forEach(s=>s.classList.remove("cur"));
+    if(id==="patterns")$("#patterns").scrollIntoView();return}
+  document.body.classList.add("v-day");document.body.classList.remove("v-home");
+  $$("section.entry").forEach(s=>s.classList.toggle("cur",s===secOf[k]));
+  const was=show._k;drawHead(byKey[k]);setTab(secOf[k],tab);show._k=k;
+  if(was!==k&&tab!=="trades")scrollTo({top:0});
+}
+addEventListener("hashchange",show);show();
+/* clicking a chart bar, tile or check row opens the trade list: switch tab first */
+function activate(on){
+  let k=null;const ch=on.closest(".chart[data-rows]");
+  if(ch&&on.dataset&&on.dataset.i!=null){try{const lbl=String(JSON.parse(ch.dataset.rows)[+on.dataset.i][0]);const mm=/^(Nov|Dec|Oct)\s+(\d{1,2})/i.exec(lbl);if(mm)k=mm[1].toLowerCase()+(+mm[2])}catch(_){}}
+  if(!k){const sec=on.closest("section.entry");k=sec&&sec.dataset.key}
+  if(!k||!secOf[k])return;
+  if(!document.body.classList.contains("v-day")||show._k!==k){history.replaceState(null,"","#"+k+"-trades");show()}
+  else{setTab(secOf[k],"trades");route(k,"trades",true)}
+}
+document.addEventListener("click",e=>{const on=e.target.closest&&e.target.closest(".on[role=button],.daybrk .tx-flt");if(on&&!on.closest(".panel[data-tab=trades]"))activate(on)},true);
+document.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const on=e.target.closest&&e.target.closest(".on[role=button],.daybrk .tx-flt");if(on&&!on.closest(".panel[data-tab=trades]"))activate(on)},true);
 })();
 </script>
 
